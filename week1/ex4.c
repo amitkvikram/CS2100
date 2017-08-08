@@ -3,14 +3,14 @@
  * Programmer's Name: Amit Vikram Singh
  * Roll No.: 111601001
  * Email-id: 111601001@smail.iitpkd.ac.in
- * Date: 01/08/2017
+ * Date: 07/08/2017
  */
 
 #include<stdio.h>
 #include<stdlib.h>
 
-struct CLLNode{
-	int data;
+struct CLLNode{               //user defined data type(structure) CLLNode 
+	int data;             //data stores the value of node
 	struct CLLNode *next; //Pointer to next node in Circular linked list
 };
 
@@ -18,19 +18,19 @@ struct CLLNode{
 typedef struct CLLNode Node; //setting alias "Node" for "struct CLLNode"
 
 void insert(Node **Headptr){ //Headptr is a pointer to the "Head pointer"
-       printf("Enter number of nodes you want to insert: ");
-       int n, i;   //n is  number of nodes user wants to insert in list
+       printf("Enter number of nodes you want to insert: ");  //promting user to input the number of node he/she wants to insert in                                                                 list
+       int n;                                                 //n stores number of node to be inserted  
        scanf("%d",&n);
-       printf("Enter %d nodes you want to insert: ",n);
-       for(i=0;i<n;i++){
-	       int tempData;
+       if(n!=0) printf("Enter %d nodes you want to insert: ",n);     //promting user to insert n nodes      
+       for(int i=0;i<n;i++){    
+	       int tempData;       
                scanf("%d",&tempData);
-	       Node *temp= (Node*)malloc(sizeof(Node));  //Dynamically allocating Memory, memory block is pointed by pointer "Node"
+	       Node *temp= (Node*)malloc(sizeof(Node));     //Dynamically Allocating memory ponted by "temp"
 	       temp->data=tempData;
-	       if(*Headptr==NULL){  
+	       if(*Headptr==NULL){
 		       *Headptr=temp;
 		       temp->next=*Headptr;
-	       }
+	       } 
 
 	       else{
 			temp->next=*Headptr;
@@ -46,14 +46,14 @@ void insert(Node **Headptr){ //Headptr is a pointer to the "Head pointer"
 
 }
 
-void Printlist(Node **Headptr){  //Headptr is a pointer to pointer "Head"
-      Node *tempptr=*Headptr;
-      if(*Headptr==NULL){  //Checking if list is empty
+void Printlist(Node **Headptr){         //Headptr is pointer to pointer Head
+      Node *tempptr=*Headptr;    
+      if(*Headptr==NULL){              //Checking if list is EMPTY
 	      printf("List is EMPTY\n");
 	      return;
       }
 
-      while(tempptr->next!=*Headptr){   //traversing through list and printing value of each node
+      while(tempptr->next!=*Headptr){   
 	      printf("%d ", tempptr->data);
               tempptr=tempptr->next;
       }
@@ -62,22 +62,23 @@ void Printlist(Node **Headptr){  //Headptr is a pointer to pointer "Head"
 }
 		
 void search(Node **Headptr){
-	printf("Enter the value of node you want to search: ");  //Prompting user to input the value he/she wants to search in list
-	int tempData;
-	scanf("%d",&tempData);
+    printf("Enter the value of node you want to search: ");
+    int tempData;            //tempData stores value to be searched
+    scanf("%d",&tempData);
     Node *tempptr=*Headptr;
-    int index=0;
-    while(tempptr!=NULL){
-        if(tempptr->data!=tempData){ tempptr=tempptr->next;
-        index++;
-    }
-        else {
+    int index=0;           //stores the position at which value(tempData) is found
+    while(tempptr!=NULL){  //traverse the list, loop breaks if "value(data) of node"=val OR we reach at end of list
+        if(tempptr->data!=tempData){ //Checking if "value(data) of node"= tempData
+        	tempptr=tempptr->next;
+        	index++;          //inrementing index by 1
+        }
+        else {      //Checks if we found the node with data=tempData
             index++;
-            break;   //breaks the loop if data is found in linked list
+            break;
         }
     }
-   
-    if(tempptr==NULL){ 
+    
+    if(tempptr==NULL){    //Checking if value exist or not in linked list
         printf("Value not found in list\n");
         return;
     }
@@ -87,11 +88,11 @@ void search(Node **Headptr){
 
 
 int main(){
-	Node *Head;
+	Node *Head;        //Pointer to first node of list
 	Head= NULL;
-	insert(&Head);      //Passing address of Head to insert function, insert function inserts nodes in list
-        Printlist(&Head);  //Passing address of Head to Printlist function
-        search(&Head);  //Passing adress of Head to search function, search function searches a node in linked list and prints its index 
+	insert(&Head);     //Passing address of Head to insert function, the insert function inserts n nodes in list
+        Printlist(&Head);  //Passing address of Head to printList function,printList funtion prints the list
+        search(&Head);     //Passing address of Head to search function, search function searches a value in list
        	return 0;
 }
 
