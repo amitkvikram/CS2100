@@ -116,6 +116,17 @@ void Printlist(Node **Headptr){   //printList function prints value(data) of lin
 	printf("\n");
 }
 
+void FreeMemory(Node **Headptr){
+	Node *tempptr=*Headptr;
+	Node *temp1;
+	if(tempptr==NULL) return;
+	while(tempptr!=NULL){
+		temp1=tempptr;
+		tempptr=tempptr->next;
+		free(temp1);
+	}
+ }
+
 int main(){
        Node *Head =NULL;
        int N;
@@ -134,5 +145,6 @@ int main(){
        reverse(&Head);    //passing address of Head to reverse fuction,the function which reverse the list
        printf("Reversed list is: \n"); 
        Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+       FreeMemory(&Head); //Passing address of Head to FreeMemory function, FreeMemory function free the dynamically allocated memory
        return 0;
 }

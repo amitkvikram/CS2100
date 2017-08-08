@@ -17,8 +17,8 @@ typedef struct Node Node; // setting alias "Node" for "struct Node"
 
 void frontPush(Node **Headptr, int N){  //frontPush is a function which adds N nodes in the beginning of list, **Headptr is a pointe                                          -r to pointer Head of linked list
        printf("Enter the %d nodes you want to add:\n",N); //Prompt user to input the value of N nodes
-       int tempData;                                      //tempData will store the value to be inserted in linked list
-       for(int i=0;i<N;i++){
+       int tempData, i;                                      //tempData will store the value to be inserted in linked list
+       for(i=0;i<N;i++){
 	       scanf("%d",&tempData);
 	       Node *temp= (Node*) malloc(sizeof(Node));  //Dynamically allocating memory block pointed by pointer temp;
 	       temp->data= tempData;                      //setting data member of allocated memory to tempData
@@ -134,5 +134,6 @@ int main(){
        reverse(&Head);    //passing address of Head to reverse fuction,the function which reverse the list
        printf("Reversed list is: \n"); 
        Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+       FreeMemory(&Head); //Passing address of Head to FreeMemory function, FreeMemory function free the dynamically allocated memory
        return 0;
 }

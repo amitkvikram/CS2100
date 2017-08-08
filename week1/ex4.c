@@ -19,10 +19,10 @@ typedef struct CLLNode Node; //setting alias "Node" for "struct CLLNode"
 
 void insert(Node **Headptr){ //Headptr is a pointer to the "Head pointer"
        printf("Enter number of nodes you want to insert: ");  //promting user to input the number of node he/she wants to insert in                                                                 list
-       int n;                                                 //n stores number of node to be inserted  
+       int n, i;                                                 //n stores number of node to be inserted  
        scanf("%d",&n);
        if(n!=0) printf("Enter %d nodes you want to insert: ",n);     //promting user to insert n nodes      
-       for(int i=0;i<n;i++){    
+       for(i=0;i<n;i++){    
 	       int tempData;       
                scanf("%d",&tempData);
 	       Node *temp= (Node*)malloc(sizeof(Node));     //Dynamically Allocating memory ponted by "temp"
@@ -67,7 +67,7 @@ void search(Node **Headptr){
     scanf("%d",&tempData);
     Node *tempptr=*Headptr;
     int index=0;           //stores the position at which value(tempData) is found
-    while(tempptr!=NULL){  //traverse the list, loop breaks if "value(data) of node"=val OR we reach at end of list
+    do{  //traverse the list, loop breaks if "value(data) of node"=val OR we reach at end of list
         if(tempptr->data!=tempData){ //Checking if "value(data) of node"= tempData
         	tempptr=tempptr->next;
         	index++;          //inrementing index by 1
@@ -76,15 +76,30 @@ void search(Node **Headptr){
             index++;
             break;
         }
-    }
+    }while(tempptr!=*Headptr);
     
-    if(tempptr==NULL){    //Checking if value exist or not in linked list
+    if(tempptr==*Headptr && index!=1){    //Checking if value exist or not in linked list
         printf("Value not found in list\n");
         return;
     }
 
     printf("Value found at position: %d\n",index);
 }
+
+void FreeMemory(Node **Headptr){
+	Node *tempptr=*Headptr;
+	Node *temp1;
+	if(tempptr==NULL) return;
+	tempptr=tempptr->next;
+	while(tempptr->next!=*Headptr){   
+	      temp1=tempptr;
+	      tempptr=tempptr->next;
+	      free(temp1);
+        }
+        
+        free(*Headptr);
+ }
+	
 
 
 int main(){
@@ -93,6 +108,7 @@ int main(){
 	insert(&Head);     //Passing address of Head to insert function, the insert function inserts n nodes in list
         Printlist(&Head);  //Passing address of Head to printList function,printList funtion prints the list
         search(&Head);     //Passing address of Head to search function, search function searches a value in list
+        FreeMemory(&Head); //Passing address of Head to FreeMemory function, FreeMemory function free the dynamically allocated memory
        	return 0;
 }
 
