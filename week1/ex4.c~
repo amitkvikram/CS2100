@@ -77,7 +77,7 @@ void search(Node **Headptr){
         }
     }
    
-    if(tempptr==NULL){ 
+    if(tempptr==NULL){
         printf("Value not found in list\n");
         return;
     }

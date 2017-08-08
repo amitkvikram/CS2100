@@ -10,8 +10,8 @@ typedef struct Node Node; // setting alias "Node" for struct Node
 
 void frontPush(Node **Headptr, int N){
        printf("Enter the %d nodes you want to add:\n",N);
-       int tempData, i;
-       for(i=0;i<N;i++){
+       int tempData;
+       for(int i=0;i<N;i++){
 	       scanf("%d",&tempData);
 	       Node *temp= (Node*) malloc(sizeof(Node));
 	       temp->data= tempData;
@@ -22,9 +22,9 @@ void frontPush(Node **Headptr, int N){
 
 void push(Node **Headptr, int N){
 	printf("Enter the %d nodes you want to add: \n",N);
-	int tempData, i;
+	int tempData;
 	Node *tempHead= *Headptr;
-	for(i=0;i<N;i++){
+	for(int i=0;i<N;i++){
 		scanf("%d",&tempData);
 		Node *temp=(Node*) malloc(sizeof(Node));
 		temp->data=tempData;
