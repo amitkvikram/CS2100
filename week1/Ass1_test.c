@@ -3,6 +3,7 @@
   Programmers'Name: Amit Vikram Singh
   Roll No.:111601001
   Data:07/08/2017
+  NOTE: While taking input from user, programme will push the value at beginning of list
 */
 
 #include<stdio.h>
@@ -60,7 +61,7 @@ void insert(Node **Headptr){
 
 }
 
-void delete(Node **Headptr, int val){ //delete function delete a node whose "data=val" where val is input by user
+void delete(Node **Headptr, int val){ //delete function delete the duplicates of a node
 
        if(*Headptr==NULL){                   //checking if list is empty
 	       printf("List is already EMPTY\n"); //print that list is empty
