@@ -7,17 +7,20 @@
 
 #include<stdio.h>
 
-int n;
+int n;  
 
+//Printing value from n to 0
 void Print(int n){
 	if(n==-1) return;
 	printf("%d ", n);
 	Print(n-1);
 }
 
+//BEGINNING OF MAIN FUNCTION
 int main(){
 	printf("Enter value of n: ");
 	scanf("%d",&n);
-	Print(n);
+	Print(n);  //calling function Print, which prints all integers from n to 0;
 	return 0;
 }
+//ENDING OF MAIN FUNCTION

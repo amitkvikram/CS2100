@@ -14,7 +14,7 @@ void fibonnaci(int prev, int num, int count){
 	printf("%d ",prev);     //prints the element
 	int temp=prev;
 	prev=num;
-	num=num+temp;
+	num=num+temp;           
 	count++;                //increments value of count, because 1 more element has been printed.
 	fibonnaci(prev, num, count);
 	return;
@@ -28,8 +28,10 @@ int main(){
 	int count=0;           //count keeps track of the number of element of fibnocci series which has been printed.
 	int prev=0;            //stores prievious element of fibonnaci
 	int num=1;
-	printf("Fibonnaci Series: ");
+	printf("Fibonnaci Series: "); 
+	
 	fibonnaci(prev, num, count);  //calling fibonnaci, which outputs fibonnaci series upto n elements
+	printf("\n");
 }
 //ENDING OF MAIN FUNCTION	
 	

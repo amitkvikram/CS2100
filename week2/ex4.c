@@ -7,7 +7,7 @@
 
 #include<stdio.h>
 
-void Recursion(
+void Palindrome(char str, 
 
 int main(){
 	int size;
