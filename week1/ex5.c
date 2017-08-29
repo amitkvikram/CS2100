@@ -1,96 +1,170 @@
 /*
- * Programme Name: Ex5.c
- * Programmer's Name: Amit Vikram Singh
- * Roll no.: 111601001
- * Email-id: 111601001@smail.iitpkd.ac.in
- * Date: 01/08/2017
- */
+  Problem Name:Ex5
+  Programmers'Name: Amit Vikram Singh
+  Roll No.:111601001
+  Data:15/08/2017
+*/
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 
-struct student{
-    int ID;               //Variable to store ID of student
-    char Name[40];        //Variable to store the name of student
-    struct student *next; //pointer to next node of linked list
-    struct student *prev; //pointer to previous node of linked list
+struct DLLNode{
+	int data;
+	struct DLLNode *next; //ponter to next node in linked list
+      struct DLLNode *prev; //ponter to previous node in linked list
 };
 
-typedef struct student student; //Setting alias "student" for "struct student"
+typedef struct DLLNode Node; // setting alias "Node" for "struct Node"
 
-void TakeInput(student **Headptr, int N){ //Headptr is a pointer to pointer to head
-        student *tempptr= *Headptr; //tempptr points to the head of list
-        char name[40]; //stores name of student
-        int ID;       //stores ID of student
-        for(int i=0;i<N;i++){
-            scanf("%s %d",name,  &ID);
-            student *temp= (student*)malloc(sizeof(student)); //Dynamically Allocating Memory
-            temp->ID=ID;
-            strcpy(temp->Name,name);
-            
-            temp->next=NULL;
-            if(*Headptr==NULL){
-                *Headptr=temp;
-                temp->prev=*Headptr;
-                tempptr=*Headptr;
-            }
-            else{
-                temp->prev=tempptr;
-                tempptr->next=temp;
-                tempptr=temp;
-            }
-
-        }
+void frontPush(Node **Headptr, int N){ //frontPush is a function which adds N nodes in the beginning of list, **Headptr is a pointer to pointer to head                                          -r to pointer Head of linked list
+       printf("Enter the %d nodes you want to add:\n",N); //Prompt user to input the value of N nodes
+       int tempData, i;                                      //tempData will store the value to be inserted in linked list
+       Node *tempptr=*Headptr;
+       for(i=0;i<N;i++){
+             Node *temp= (Node*)malloc(sizeof(Node));  //Dynamically allocating memory.
+             scanf("%d",&tempData);    //scanning the data input by user
+             temp->data=tempData;
+             temp->next=NULL;
+             if(*Headptr==NULL){       //Checking if list is empty
+                  *Headptr=temp;
+                  tempptr=*Headptr;
+                  temp->prev=NULL;
+             }
+             else{
+                   temp->prev=tempptr;
+                   tempptr->next=temp;
+                   tempptr=tempptr->next;
+             }
+       }
 }
 
-void Printlist(student **Headptr){
-    if(*Headptr==NULL){
-        printf("LIST is EMPTY\n");
-        return;
-    }
-    student *tempptr= *Headptr;
-    int i=0;
-    while(tempptr!=NULL){
-        printf("%s\n", tempptr->Name);
-        printf("%d\n", tempptr->ID);
-        tempptr=tempptr->next;
-
-    }
+void Printlist(Node **Headptr){  //printList function prints element of list
+      Node *tempptr= *Headptr;
+      if(*Headptr==NULL){        //Checking if list is empty
+            printf("List is empty\n");
+            return;              //returning to main() since list is empty
+      }
+      while(tempptr!=NULL){
+            printf("%d ",tempptr->data);
+            tempptr= tempptr->next;    //Moving to next node
+      }
+      printf("\n");
 }
 
-void student_with_maxID(student **Headptr){
-    student *tempptr= *Headptr;
-    if(tempptr==NULL){
-        printf("List is EMPTY");
-        return;
-    }
+void insert(Node **Headptr){   //function iserts a node after a node having specific value
+      printf("Enter val you want to insert in list: "); //Promting user to enter the value to be inserted in linked list
+	int val1;                                         //val1 stores the value to be inserted in list
+	scanf("%d",&val1);
+	printf("Enter value after which you want to insert new node: ");
+	int val;      //val stores the value of node after which new node is inserted
+	scanf("%d",&val);
+      if(*Headptr==NULL){
+            printf("List is Empty\n");
+            return;
+      }
 
-    int maxID= tempptr->ID;
-    char name[40];
-    strcpy(name, tempptr->Name);
-    int index=0, i=0;
-    while(tempptr!=NULL){
-        if(tempptr->ID>maxID){
-            maxID=tempptr->ID;
-            strcpy(name, tempptr->Name);
-            index=i;
-        }
-        else i++;
-        tempptr=tempptr->next;
-    }
+      Node *tempptr= *Headptr;
+      while(tempptr!=NULL && tempptr->data!=val){
+            tempptr=tempptr->next;
+      }
 
-    printf("Student with largest ID is: %s\n", name);
+      if(tempptr==NULL){
+            printf("Data not found\n");
+            return;
+      }
+
+      Node *temp=(Node*)malloc(sizeof(Node));
+      temp->data=val1;
+      temp->next=NULL;
+      temp->prev=NULL;
+      temp->next=tempptr->next;
+      if(tempptr->next!=NULL) tempptr->next->prev= temp;
+      temp->prev=tempptr;
+      tempptr->next=temp;
+}
+
+void delete(Node **Headptr){                 //deleting all node having data = val
+      printf("Enter val to be deleted: ");  //Prompting user to input the value(data) of node to be deleted
+      int val;
+      scanf("%d", &val);                    //scanning value
+      if(*Headptr==NULL){                   //checking if list is empty
+           printf("List is already EMPTY\n"); //print that list is empty
+           return ;                       //return to calling function
+      }
+
+
+      if((*Headptr)->data==val){
+            while(*Headptr!=NULL && (*Headptr)->data==val){
+                  Node *temp=*Headptr;
+                  if((*Headptr)->next!=NULL){
+                        (*Headptr)->next->prev=NULL;
+                  }
+                  *Headptr=(*Headptr)->next;
+                  free(temp);
+            }
+      }
+
+      Node *tempptr=*Headptr;
+      if(*Headptr==NULL) return;
+      while(tempptr->next!=NULL){
+            if(tempptr->next->data==val){
+                  Node *temp= tempptr->next;
+                  tempptr->next=tempptr->next->next;
+                  if(tempptr->next!=NULL){
+                        tempptr->next->prev=tempptr;
+                  }
+                  free(temp);
+            }
+
+            else tempptr=tempptr->next;
+      }
+}
+
+void reverse(Node **Headptr){    //function reverse(), reverses the list
+      if(*Headptr==NULL){        //Checking if list is empty.
+            return ;
+      }
+
+      if((*Headptr)->next==NULL) return ;  //If list contains only one element there is no need to reverse the list
+
+      Node *tempptr=*Headptr,*temp1;
+      while(tempptr!=NULL){
+            temp1=tempptr->prev;
+            tempptr->prev=tempptr->next;
+            tempptr->next=temp1;
+            tempptr=tempptr->prev;
+      }
+
+      if(temp1!=NULL) *Headptr=temp1->prev;
+}
+
+void FreeMemory(Node **Headptr){    //deallocate the dynamic memory allocated for list
+      Node *tempptr= *Headptr;
+      while(tempptr!=NULL){
+            Node *temp=tempptr;
+            tempptr= tempptr->next;
+            free(temp);
+      }
 }
 
 int main(){
-    student *Head=NULL;
-    int N;
-    scanf("%d",&N);
-    TakeInput(&Head, N);
-    printf("List of Students is: \n");
-    Printlist(&Head);
-    student_with_maxID(&Head);
-}    
-    
-
+      Node *Head;   //pointer to head of list
+      Head=NULL;
+      int N;        //N is number of nodes user want to add.
+      printf("Enter number of nodes you want to add to linked list: ");
+      scanf("%d",&N);
+      frontPush(&Head, N); //passing address of head and number of nodes to frontPush
+      printf("List is: \n");
+      Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+      insert(&Head);     //inserts a node in linked list
+      printf("New List is: \n");
+      Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+      delete(&Head);     //passing address of Head to funtion delete,which delete a node from list
+      printf("New list is: \n");
+      Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+      reverse(&Head);    //passing address of Head to reverse fuction,the function which reverse the list
+      printf("Reversed list is: \n");
+      Printlist(&Head);  //passing address of Head to printList, which prints the linked list
+      FreeMemory(&Head);
+      return 0;
+}
