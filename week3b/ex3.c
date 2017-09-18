@@ -6,7 +6,7 @@
 */
 
 #include<stdio.h>
-int inc=0;
+
 
 void swap(int *a, int *b){
       int temp = *a;
@@ -15,7 +15,6 @@ void swap(int *a, int *b){
 }
 
 int partition(int *arr, int p, int r){
-      inc++;
       int i = p;
       for(int j=p; j<r; j++){
             if(arr[j]<=arr[r]){
@@ -57,7 +56,7 @@ int main(int argc, char const *argv[]) {
  	for(i=0; i<n; i++){
  		printf("%d ", arr[i]);
  	}
- 	printf("\n%d",inc);
+ 	printf("\n");
       return 0;
 }
 
