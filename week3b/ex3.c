@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
  		scanf("%d", &arr[i]);
  	}
 
-      quick_sort(arr, 0, n-1);  //callinf function quick_sort to sort the array
+      quick_sort(arr, 0, n-1);  //calling function quick_sort to sort the array
 
       printf("Sorted Array: ");
  	for(i=0; i<n; i++){
