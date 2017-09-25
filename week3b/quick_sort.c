@@ -14,8 +14,8 @@ void swap(int *a, int *b){
       *b = temp;
 }
 
-int partition(int *arr, int p, int r){
-      int i = p;
+int partition(int *arr, int p, int r){       //arr[r] is pivot
+      int i = p;			
       for(int j=p; j<r; j++){
             if(arr[j]<=arr[r]){
                   swap(&arr[i], &arr[j]);
