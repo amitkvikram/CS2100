@@ -36,26 +36,14 @@ Graph *CreateGraph(int V){
 	return G;
 }
 
-v_Info* bfsv_Info(Graph *G, int root, int goal){
+v_Info* bfsv_Info(Graph *G){
 	v_Info *v_InfoPtr;
 
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
 	
-	v_InfoPtr[root].dist = 0;
-	v_InfoPtr[root].Checked = true;
+	v_InfoPtr[0].dist = 0;
+	v_InfoPtr[0].Checked = true;
 	return v_InfoPtr;
-}
-
-void freeGraph(Graph *G, v_Info *v_I){
-	free(v_I);	
-	for(int i=0; i<G->V; i++){
-		//G->adjWt++;
-		//free(temp);
-		//temp = G->adjWt[0];
-		free(G->adjWt[i]);
-	}
-
-	free(G->adjWt);
 }
 
 //Creating dot file
@@ -72,7 +60,7 @@ void MakeDot(Graph *G,v_Info *v_I){
 		for(int j=i; j<G->V; j++){
 			if(G->adjWt[i][j]>0){
 				flag =1;
-				if(v_I[j].prev ==i || v_I[i].prev == j){
+				if(v_I[i].connected_to_goal == 1 && v_I[j].connected_to_goal ==1){
 					fprintf(fp, "%s%d -- %d%s","\t",i,j,"[color=red];\n");
 				}
 				else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");
@@ -84,15 +72,33 @@ void MakeDot(Graph *G,v_Info *v_I){
 	fprintf(fp, "%s\n", "}");
 }
 
+
+void ShortestPath(v_Info *v_I, int root, int goal){
+	printf("Length of shortest path between %d and %d is: %d\n", root, goal, v_I[goal].dist);
+	int current = goal;
+	int dist = 0;
+	printf("Shortest Path is: ");
+	do{
+		printf("%d ",current);
+		v_I[current].connected_to_goal = 1;
+		current = v_I[current].prev; 
+	}while(current!= root);
+
+	printf("%d\n",current);
+	v_I[current].connected_to_goal = 1;
+}
+
 int BreadthFirstSearch(Graph *G){
-	v_Info *v_I = bfsv_Info(G, 0, 0);
+	v_Info *v_I = bfsv_Info(G);
 	int flag = 0;  	//to track if path is found or not
 	queue *Q =createQueue();
-	int components = 0;
+
 	v_I[0].Checked =false;
+	int max = 0;
+	int diameter_root =0, diameter_goal =0;
 	for(int root = 0; root<G->V; root++){
+		v_I[root].dist = 0;
 		if(v_I[root].Checked == false){
-			components++;
 			enQueue(&Q, root);
 			while(!isEmptyQueue(&Q)){
 			int Current = dequeue(&Q);		//finding current node
@@ -101,24 +107,52 @@ int BreadthFirstSearch(Graph *G){
 						if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
 							v_I[i].Checked = true;	//marking  node as visited
 							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
-							v_I[i].prev = Current;
 							enQueue(&Q, i);
-	
 						}
-	
 					}
-	
 				}
-	
-			}	
+			}
 		}
 
+		for(int k = 0; k<G->V; k++){
+			v_I[k].Checked = false;
+			if(v_I[k].dist>max){
+				max = v_I[k].dist;
+				diameter_root= root;
+				diameter_goal = k;
+			}
+		}
+
+		v_I[diameter_root].dist = 0;
+		enQueue(&Q, diameter_root);
+		while(!isEmptyQueue(&Q)){
+			printf("entered");
+			int Current = dequeue(&Q);		//finding current node
+			if(Current == diameter_goal) {
+				printf("Found\n");
+				flag = 1;		//returns 1 if Current node is equal means if we have found path from root to goal
+				break;
+			}
+			for(int i=0; i<G->V; i++){
+				printf("Entere in for\n");
+				if(G->adjWt[Current][i] > 0){
+					if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
+						v_I[i].Checked = true;	//marking  node as visited
+						v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
+						printf("%d\n",v_I[i].dist);
+						v_I[i].prev = Current;
+						enQueue(&Q, i);
+					}
+				}
+			}
+		}
 		
 	}
-	MakeDot(G, v_I);
-	freeGraph(G, v_I);
 
-	return components;
+	ShortestPath(v_I, diameter_root, diameter_goal);
+	MakeDot(G,v_I);
+	printf("diameter is: %d %d", diameter_root, diameter_goal);
+	return flag;
 }
 	
 void printAdjacency(Graph *G){
@@ -152,7 +186,6 @@ Graph* Read(FILE **fp){
 	strcpy(G->GraphName,GraphName);
 
 	printAdjacency(G);
-	fclose(*fp);
 	return G;
 }	
 
@@ -172,7 +205,7 @@ int main(){
 	 }
 	
 	Graph *G = Read(&fp);
-	int components = BreadthFirstSearch(G);
-	printf("No of components: %d\n",components);
+	int root, goal;		//Aim is to search if path between root and goal exists
+	int flag = BreadthFirstSearch(G);
 	return 0;
 }

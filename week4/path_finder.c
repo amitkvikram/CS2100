@@ -46,6 +46,16 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 	return v_InfoPtr;
 }
 
+void freeGraph(Graph *G, v_Info *v_I){
+	free(v_I);
+	for(int i=0; i<G->V; i++){
+		free(G->adjWt[i]);
+	}
+
+	free(G->adjWt);
+	free(G);
+}
+
 //Creating dot file
 void MakeDot(Graph *G,v_Info *v_I){	
 	FILE *fp;
@@ -112,8 +122,8 @@ int BreadthFirstSearch(Graph *G, int root, int goal){
 		}
 	}
 
-	// ShortestPath(v_I, root, goal);
-	// MakeDot(G,v_I);
+	ShortestPath(v_I, root, goal);
+	MakeDot(G,v_I);
 	return flag;
 }
 	
