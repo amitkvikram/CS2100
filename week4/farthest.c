@@ -2,7 +2,8 @@
    Name: Amit Vikram Singh
    Roll No: 111601001
    Date: 03/10/2017
-   Task: 02
+   Task: farthest.c
+
 */
 #include<stdio.h>
 #include<stdlib.h>
@@ -52,7 +53,7 @@ void MakeDot(Graph *G,v_Info *v_I){
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
 	strcat(GraphName_cp,".dot");
-	printf("%s\n",GraphName_cp);
+	printf("Dot File: %s\n",GraphName_cp);
 	fp = fopen(GraphName_cp,"w");
 	fprintf(fp, "%s%s%s\n", "graph ",G->GraphName,"{");
 	for(int i=0; i<G->V-1; i++){
@@ -77,12 +78,9 @@ void ShortestPath(v_Info *v_I, int root, int goal){
 	printf("Length of shortest path between %d and %d is: %d\n", root, goal, v_I[goal].dist);
 	int current = goal;
 	int dist = 0;
-	printf("Shortest Path is: ");
-	int i=0;
-	
+	printf("longes Shortest Path is: ");
+
 	do{
-		if(i>7) break;
-		i++;
 		printf("%d ",current);
 		v_I[current].connected_to_goal = 1;
 		current = v_I[current].prev; 
@@ -96,6 +94,7 @@ int BreadthFirstSearch(Graph *G){
 	v_Info *v_I = bfsv_Info(G);
 	int flag = 0;  	//to track if path is found or not
 	queue *Q =createQueue();
+	int Current;
 
 	v_I[0].Checked =false;
 	int max = 0;
@@ -105,7 +104,7 @@ int BreadthFirstSearch(Graph *G){
 		if(v_I[root].Checked == false){
 			enQueue(&Q, root);
 			while(!isEmptyQueue(&Q)){
-			int Current = dequeue(&Q);		//finding current node
+			Current = dequeue(&Q);		//finding current node
 				for(int i=0; i<G->V; i++){
 					if(G->adjWt[Current][i] > 0){
 						if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
@@ -124,26 +123,24 @@ int BreadthFirstSearch(Graph *G){
 				max = v_I[k].dist;
 				diameter_root= root;
 				diameter_goal = k;
+				
 			}
+			v_I[k].dist = 0;
 		}
 
 		v_I[diameter_root].dist = 0;
 		enQueue(&Q, diameter_root);
 		while(!isEmptyQueue(&Q)){
-			printf("entered");
 			int Current = dequeue(&Q);		//finding current node
 			if(Current == diameter_goal) {
-				printf("Found\n");
 				flag = 1;		//returns 1 if Current node is equal means if we have found path from root to goal
 				break;
 			}
 			for(int i=0; i<G->V; i++){
-				printf("Entere in for\n");
 				if(G->adjWt[Current][i] > 0){
 					if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
 						v_I[i].Checked = true;	//marking  node as visited
 						v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
-						printf("%d\n",v_I[i].dist);
 						v_I[i].prev = Current;
 						enQueue(&Q, i);
 					}
@@ -152,10 +149,9 @@ int BreadthFirstSearch(Graph *G){
 		}
 		
 	}
-
+	printf("diameter is: %d %d", diameter_root, diameter_goal);
 	ShortestPath(v_I, diameter_root, diameter_goal);
 	MakeDot(G,v_I);
-	printf("diameter is: %d %d", diameter_root, diameter_goal);
 	return flag;
 }
 	
@@ -195,7 +191,7 @@ Graph* Read(FILE **fp){
 
 int main(){
 	char FileName[50];
-	printf("Enter Filename");
+	printf("Enter Filename: ");
 	scanf("%s", FileName);
 	
 	FILE *fp;
