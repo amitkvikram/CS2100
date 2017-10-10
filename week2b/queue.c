@@ -1,9 +1,3 @@
-/*
-  Problem Name:Ex2
-  Programmers'Name: Amit Vikram Singh
-  Roll No.:111601001
-  Data:05/09/2017
-*/
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -109,34 +103,3 @@ void queueFront (queue **Q){
       }
 }
 
-//main begins here
-int main(){
-      queue *Q=createQueue();
-      int option;
-      printf("a.Enter 1 to enqueue\nb.Enter 2 to dequeue\n");
-      printf("Option: ");
-      scanf("%d",&option);
-      while(option){
-            if(option==1){
-                  int temp;
-                  printf("Enter Elemnt: ");
-                  scanf("%d",&temp);
-                  enQueue(&Q, temp);
-            }
-
-            else if(option==2){
-                  int temp=dequeue(&Q);
-                  if(temp!=INT_MAX) printf("%d\n",temp);
-            }
-            else if(option==3){
-                  queueFront(&Q);
-            }
-
-            else if(option==4){
-                  printf("%d\n",queueSize(&Q));
-            }
-            printf("a.Enter 0 to exit\nb.Enter 1 to enqueue\nc.Enter 2 to dequeue\nc.Enter 3 to print front element\nc.Enter 4 to get queueSize\n");
-            scanf("%d",&option);
-      }
-}
-//main ends here
