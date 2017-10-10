@@ -2,7 +2,7 @@
    Name: Amit Vikram Singh
    Roll No: 111601001
    Date: 03/10/2017
-   Task: path_finder.c
+   Task: 02
 */
 #include<stdio.h>
 #include<stdlib.h>
@@ -17,9 +17,9 @@ struct Graph{		//Structure to store graph information
 	char GraphName[100];
 };
 
-struct v_Info{			//structure to store information about vertices during BFS
-		int dist;	//distance of vertex from root
-		bool Checked;	
+struct v_Info{		//structure to store information about vertices during BFS
+		int dist;	//distance of vertes from current root
+		bool Checked;
 		int prev;
 		int connected_to_goal;
 };
@@ -36,7 +36,7 @@ Graph *CreateGraph(int V){		//Creating graph data
 	return G;
 }
 
-v_Info* bfsv_Info(Graph *G, int root, int goal){
+v_Info* bfsv_Info(Graph *G, int root, int goal){	
 	v_Info *v_InfoPtr;
 
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
@@ -47,13 +47,13 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 }
 
 void freeGraph(Graph *G, v_Info *v_I){
-	free(v_I);
+	free(v_I);	
 	for(int i=0; i<G->V; i++){
+		
 		free(G->adjWt[i]);
 	}
 
 	free(G->adjWt);
-	free(G);
 }
 
 //Creating dot file
@@ -70,8 +70,8 @@ void MakeDot(Graph *G,v_Info *v_I){
 		for(int j=i; j<G->V; j++){
 			if(G->adjWt[i][j]>0){
 				flag =1;
-				if(v_I[i].connected_to_goal == 1 && v_I[j].connected_to_goal ==1){
-					fprintf(fp, "%s%d -- %d%s","\t",i,j,"[color=red];\n");		//coloring path from root to goal
+				if(v_I[j].prev ==i || v_I[i].prev == j){
+					fprintf(fp, "%s%d -- %d%s","\t",i,j,"[color=red];\n");	//colring path which was traced  in BFS
 				}
 				else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");
 			}
@@ -82,53 +82,45 @@ void MakeDot(Graph *G,v_Info *v_I){
 	fprintf(fp, "%s\n", "}");
 }
 
-//Printing Shortest Path
-void ShortestPath(v_Info *v_I, int root, int goal){
-	printf("Length of shortest path between %d and %d is: %d\n", root, goal, v_I[goal].dist);		//printing length of shortest path between root and goal.
-	int current = goal;
-	int dist = 0;
-	printf("Shortest Path is: ");
-	//Printing shortest path between root and goal
-	do{
-		printf("%d ",current);
-		v_I[current].connected_to_goal = 1;
-		current = v_I[current].prev; 
-	}while(current!= root);
-
-	printf("%d\n",current);
-	v_I[current].connected_to_goal = 1;	//marking the vertes if it is included in shortest path
-}
-
-int BreadthFirstSearch(Graph *G, int root, int goal){
-	v_Info *v_I = bfsv_Info(G, root, goal);
+//Breadth First Search
+int BreadthFirstSearch(Graph *G){
+	v_Info *v_I = bfsv_Info(G, 0, 0);
 	int flag = 0;  	//to track if path is found or not
 	queue *Q =createQueue();
-
-	enQueue(&Q, root);
-	while(!isEmptyQueue(&Q)){
-		int Current = dequeue(&Q);		//finding current node
-		if(Current == goal) {
-			flag = 1;		//returns 1 if Current node is equal means if we have found path from root to goal
-			break;
-		}
-		for(int i=0; i<G->V; i++){
-			if(G->adjWt[Current][i] > 0){
-				if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
-					v_I[i].Checked = true;	//marking  node as visited
-					v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
-					v_I[i].prev = Current;
-					enQueue(&Q, i);
+	int components = 0;		//no of connected components
+	v_I[0].Checked =false;
+	for(int root = 0; root<G->V; root++){
+		if(v_I[root].Checked == false){
+			components++;
+			enQueue(&Q, root);
+			while(!isEmptyQueue(&Q)){
+			int Current = dequeue(&Q);		//finding current node
+				for(int i=0; i<G->V; i++){
+					if(G->adjWt[Current][i] > 0){
+						if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
+							v_I[i].Checked = true;	//marking  node as visited
+							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
+							v_I[i].prev = Current;
+							enQueue(&Q, i);
+	
+						}
+	
+					}
+	
 				}
-			}
+	
+			}	
 		}
+
+		
 	}
+	MakeDot(G, v_I);
+	freeGraph(G, v_I);
 
-	ShortestPath(v_I, root, goal);
-	MakeDot(G,v_I);
-	return flag;
+	return components;
 }
-
-//Printing adjacency matrix	
+	
+//Printing adjacency matrix
 void printAdjacency(Graph *G){
 
 	for(int i=0; i<G->V; i++){
@@ -140,7 +132,8 @@ void printAdjacency(Graph *G){
 
 }	
 
-//Reading Graph file
+
+
 Graph* Read(FILE **fp){
 	char GraphName[50] ;
 	fscanf(*fp, " %[^\n]s", GraphName);
@@ -159,6 +152,7 @@ Graph* Read(FILE **fp){
 	strcpy(G->GraphName,GraphName);
 
 	printAdjacency(G);
+	fclose(*fp);
 	return G;
 }	
 
@@ -178,11 +172,7 @@ int main(){
 	 }
 	
 	Graph *G = Read(&fp);
-	int root, goal;		//Aim is to search if path between root and goal exists
-	printf("Enter Root and Goal: ");
-	scanf("%d%d", &root, &goal);
-	int flag = BreadthFirstSearch(G, root, goal);
-	if(flag == 1) printf("Connected\n");
-	else printf("Not Connected\n");
+	int components = BreadthFirstSearch(G);
+	printf("No of components: %d\n",components);
 	return 0;
 }
