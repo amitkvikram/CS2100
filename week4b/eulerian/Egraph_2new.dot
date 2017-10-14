@@ -1,0 +1,17 @@
+graph Egraph_2{
+	3 -- 0[color=red];
+	0 -- 1[color=red];
+	1 -- 5[color=red];
+	5 -- 9[color=red];
+	9 -- 0[color=red];
+	0 -- 5[color=red];
+	5 -- 2[color=red];
+	2 -- 6[color=red];
+	6 -- 9[color=red];
+	9 -- 4[color=red];
+	4 -- 8[color=red];
+	8 -- 7[color=red];
+	7 -- 9[color=red];
+	9 -- 8[color=red];
+	9
+}
