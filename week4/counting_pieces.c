@@ -22,6 +22,7 @@ struct v_Info{		//structure to store information about vertices during BFS
 		bool Checked;
 		int prev;
 		int connected_to_goal;
+		int degree;
 };
 
 typedef struct Graph Graph;

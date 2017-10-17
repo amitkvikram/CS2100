@@ -1,15 +1,8 @@
-/*
-  Problem Name:Ex2
-  Programmers'Name: Amit Vikram Singh
-  Roll No.:111601001
-  Data:05/09/2017
-*/
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 #include<limits.h>
-#include<stdbool.h>
+
 
 struct Node{
       int data;
@@ -37,6 +30,22 @@ queue *createQueue(){
 int isEmptyQueue(queue **Q){
       if((*Q)->front==NULL) return 1; //returns 1 if Queue is empty
       return 0;                  //returns 0 if Queue is not empty
+}
+
+
+//returns size of queue
+int queueSize(queue**Q){
+      if(isEmptyQueue(Q)){
+            printf("Queue is Empty\n");
+            return INT_MAX;     //returns INT_MAX if queue is empty
+      }
+      int size=1; //size stors size of queue
+      queue *tempPtr=*Q;
+      while(tempPtr->front!=tempPtr->end){
+            size++;
+            tempPtr->front=tempPtr->front->next;
+      }
+      return size;
 }
 
 //Inserts an element at	the end of the queue
@@ -82,4 +91,15 @@ int dequeue(queue **Q){
           }
     return element;
 }
-//main ends here
+
+//Prints th element at the front without removing it
+void queueFront (queue **Q){
+      if(isEmptyQueue(Q)){
+            printf("Queue is Empty\n");
+            return;
+      }
+      else{
+            printf("%d\n",(*Q)->front->data);
+      }
+}
+
