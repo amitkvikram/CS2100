@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include "double_linked_list.h"
-#include "CircularLinkedList.h"
+#include<stdbool.h>
+#include<string.h>
 #include "queue.h"
 
 struct Graph{       //Structure to store graph information
@@ -46,7 +46,7 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 
 int allVisited(Graph *G, v_Info *v_I){
 	for(int i = 0; i<G->V; i++){
-		if(!v_I[i].checked) return false;
+		if(!v_I[i].Checked) return false;
 	}
 	
 	return true;
@@ -56,13 +56,13 @@ int isSafe(Graph *G, v_Info *v_I, int vertex, int strtNode){
 	int flag = 0;
 	for(int i=0; i<G->V; i++){
 		if(i!=strtNode && i!=vertex){
-			if(v_I[i].checked = false && G->adjWt[i][vertex]>0){
+			if(v_I[i].Checked = false && G->adjWt[i][vertex]>0){
 				return 1;
 			}
 		}
 	}
 	
-	if(v_I[strtNode][vertex] >0 && allVisited(G, v_I)){
+	if(G->adjWt[strtNode][vertex] >0 && allVisited(G, v_I)){
 		return 1;
 	}
 	
@@ -70,33 +70,54 @@ int isSafe(Graph *G, v_Info *v_I, int vertex, int strtNode){
 }
 
 bool hamiltonian(Graph *G, v_Info *v_I, int vertex, queue **Q){
-	if(!isSafe(G, v_I, vertex, 0){	//checking if it's safe to add vertex means atleast one unvisited vertex is attached to it.
+	if(!isSafe(G, v_I, vertex, 0)){	//checking if it's safe to add vertex means atleast one unvisited vertex is attached to it.
 		return false;
 	}
 	
-	if(v_I[strtNode][vertex] >0 && allVisited(G, v_I)){	//if cycle is completed
-			enQueue(&Q, vertex);
+	if(G->adjWt[0][vertex] >0 && allVisited(G, v_I)){	//if cycle is completed
+			enQueue(Q, vertex);
 			return true;
 	}		
 	
-	v_I[vertex].checked = true;
+	v_I[vertex].Checked = true;
 	int i = 0;
 	
 	for(i = 1; i<G->V; i++){		
-		if(G->adjwt[vertex][i]> 0 && i!= vertex && hamiltonian(G, v_I, i, Q)){
-			enQueue(&Q, vertex);
-			count++;
+		if(G->adjWt[vertex][i]> 0 && i!= vertex && hamiltonian(G, v_I, i, Q)){
+			enQueue(Q, vertex);
 			return true;
 		}		
 	}
 		
 	if(i == G->V){
-		v_I[vertex].checked = false;
+		v_I[vertex].Checked = false;
 		return false;
 	}
 	
 	return true;
-}		
+}	
+
+	
+
+//Reading Graph file
+Graph* Read(FILE **fp){
+	char GraphName[50] ;
+	fscanf(*fp, " %[^\n]s", GraphName);	//reading graph name
+	char GraphType[50];
+	fscanf(*fp, " %[^\n]s", GraphType);	//reding graph type
+	int num_vertices;
+	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
+	Graph* G = CreateGraph(num_vertices);
+	
+	for(int i=0;i<G->V; i++){	//reading adjacecy matrix
+		for(int j=0;j<G->V;j++){
+			fscanf(*fp, "%1d", &G->adjWt[i][j]);
+		}
+	}
+
+	strcpy(G->GraphName,GraphName);
+	return G;
+}
 
 int main(){
     char FileName[50];
