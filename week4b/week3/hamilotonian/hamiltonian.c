@@ -104,6 +104,7 @@ void MakeDot(Graph **G, v_Info **v_I, queue **Q){
 }
 
 int isSafe(Graph **G, v_Info **v_I, int vertex, int strtNode){
+	int flag = 0;
 	for(int i=0; i<(*G)->V; i++){
 		if(i!=strtNode && i!=vertex){
 			if((*v_I)[i].Checked == false && (*G)->adjWt[vertex][i]>0){
@@ -118,7 +119,6 @@ int isSafe(Graph **G, v_Info **v_I, int vertex, int strtNode){
 	
 	return 0;
 }
-
 
 bool hamiltonian(Graph **G, v_Info **v_I, int vertex, queue **Q){
 	if(!isSafe(G, v_I, vertex, 0)){	//checking if it's safe to add vertex means atleast one unvisited vertex is attached to it.
@@ -150,6 +150,8 @@ bool hamiltonian(Graph **G, v_Info **v_I, int vertex, queue **Q){
 	
 	return true;
 }	
+
+	
 
 //Reading Graph file
 Graph* Read(FILE **fp){
