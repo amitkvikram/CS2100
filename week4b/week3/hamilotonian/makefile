@@ -1,7 +1,16 @@
-all: hamiltonian.out
+all: hamiltonian.out amit
+
+amit:hamiltonian.out
+	./hamiltonian.out
 	
-hamiltonian.out: hamiltonian.c queue.c
-	gcc -g hamiltonian.c -std=c11 -o hamiltonian.out queue.c
+hamiltonian.out: hamiltonian.o queue.o
+	gcc -g -Wall hamiltonian.o queue.o -std=c11 -o hamiltonian.out 
+
+hamiltonian.o: hamiltonian.c queue.h
+	gcc -c hamiltonian.c
+
+queue.o: queue.c
+	gcc -c queue.c
 	
 clean:
-	rm hamiltonian.out
+	rm hamiltonian.out *.o

@@ -22,7 +22,7 @@ typedef struct Queue queue;
 
 queue *createQueue();
 
-//checks if Queue is empty or not
+// checks if Queue is empty or not
 int isEmptyQueue(queue **Q);
 
 //Inserts an element at	the end of the queue

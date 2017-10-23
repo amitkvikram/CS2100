@@ -22,29 +22,29 @@ typedef struct Graph Graph;
 typedef struct v_Info v_Info;
 
 
-Graph *CreateGraph(int V){      //Creating graph data
-    Graph *G = (Graph*)malloc(sizeof(Graph));
-    G->V = V;
-    G->adjWt = (int**)malloc(G->V * sizeof(int*));
-    for(int i=0; i<G->V; i++)       //allocating space for adjacency matrix
-        G->adjWt[i] = (int*)calloc(G->V, sizeof(int));
-    G->components = 0;
-    G->isolated = 0;
-    return G;
-}
+// Graph *CreateGraph(int V){      //Creating graph data
+//     Graph *G = (Graph*)malloc(sizeof(Graph));
+//     G->V = V;
+//     G->adjWt = (int**)malloc(G->V * sizeof(int*));
+//     for(int i=0; i<G->V; i++)       //allocating space for adjacency matrix
+//         G->adjWt[i] = (int*)calloc(G->V, sizeof(int));
+//     G->components = 0;
+//     G->isolated = 0;
+//     return G;
+// }
 
-v_Info* bfsv_Info(Graph **G, int root, int goal){
-    v_Info *v_InfoPtr;
+// v_Info* bfsv_Info(Graph **G, int root, int goal){
+//     v_Info *v_InfoPtr;
 
-    v_InfoPtr = (v_Info*)calloc((*G)->V, sizeof(v_Info));
+//     v_InfoPtr = (v_Info*)calloc((*G)->V, sizeof(v_Info));
     
-    v_InfoPtr[root].dist = 0;
-    for(int i=0; i<(*G)->V; i++){
-    	v_InfoPtr[i].Checked = false;
-    }
+//     v_InfoPtr[root].dist = 0;
+//     for(int i=0; i<(*G)->V; i++){
+//     	v_InfoPtr[i].Checked = false;
+//     }
 
-    return v_InfoPtr;
-}
+//     return v_InfoPtr;
+// }
 
 int allVisited(Graph **G, v_Info **v_I, int vertex){
 	(*v_I)[vertex].Checked = true;
@@ -76,32 +76,32 @@ void setPrev(Graph **G, v_Info **v_I, queue **Q){
 	}
 }
 
-void MakeDot(Graph **G, v_Info **v_I, queue **Q){
-	FILE *fp;
-	char GraphName_cp[50];
-	strcpy(GraphName_cp,(*G)->GraphName);
-	strcat(GraphName_cp,"_1.dot");
-	printf("Output File: %s\n",GraphName_cp);
-	fp = fopen(GraphName_cp,"w");
-	fprintf(fp, "%s%s%s\n", "graph ",(*G)->GraphName,"{");
-	setPrev(G, v_I, Q);
+// void MakeDot(Graph **G, v_Info **v_I, queue **Q){
+// 	FILE *fp;
+// 	char GraphName_cp[50];
+// 	strcpy(GraphName_cp,(*G)->GraphName);
+// 	strcat(GraphName_cp,"_1.dot");
+// 	printf("Output File: %s\n",GraphName_cp);
+// 	fp = fopen(GraphName_cp,"w");
+// 	fprintf(fp, "%s%s%s\n", "graph ",(*G)->GraphName,"{");
+// 	setPrev(G, v_I, Q);
 
-	for(int i=0; i<(*G)->V-1; i++){
-		int flag =0;
-		for(int j=i; j<(*G)->V; j++){
-			if((*G)->adjWt[i][j]>0){
-				flag =1;
-				if((*v_I)[j].prev==i || (*v_I)[i].prev==j)
-					fprintf(fp, "%s%d -- %d%s","\t",i,j,"[color=red];\n");
-				else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");		//coloring path from root to goal
-			}
-		}
-		if(flag == 0) fprintf(fp, "%s%d%s","\t",i,";\n");
-	}
-	fprintf(fp, "%s%d%s","\t",(*G)->V-1,"\n");
-	fprintf(fp, "%s\n", "}");
-	fclose(fp);
-}
+// 	for(int i=0; i<(*G)->V-1; i++){
+// 		int flag =0;
+// 		for(int j=i; j<(*G)->V; j++){
+// 			if((*G)->adjWt[i][j]>0){
+// 				flag =1;
+// 				if((*v_I)[j].prev==i || (*v_I)[i].prev==j)
+// 					fprintf(fp, "%s%d -- %d%s","\t",i,j,"[color=red];\n");
+// 				else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");		//coloring path from root to goal
+// 			}
+// 		}
+// 		if(flag == 0) fprintf(fp, "%s%d%s","\t",i,";\n");
+// 	}
+// 	fprintf(fp, "%s%d%s","\t",(*G)->V-1,"\n");
+// 	fprintf(fp, "%s\n", "}");
+// 	fclose(fp);
+// }
 
 int isSafe(Graph **G, v_Info **v_I, int vertex, int strtNode){
 	for(int i=0; i<(*G)->V; i++){
