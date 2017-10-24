@@ -151,6 +151,7 @@ void printAdjacency(Graph *G){
 
 }
 
+
 //finding and printing eulerian path
 void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 	Node *Head = NULL;

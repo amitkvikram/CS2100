@@ -108,16 +108,16 @@ int BreadthFirstSearch(Graph *G, int root, int goal){
 	while(!isEmptyQueue(&Q)){
 		int Current = dequeue(&Q);		//finding current node
 		if(Current == goal) {
-			flag = 1;		//returns 1 if Current node is equal means if we have found path from root to goal
+			flag = 1;		//returns 1 if Current node is goal means if we have found path from root to goal
 			break;
 		}
 		for(int i=0; i<G->V; i++){
 			if(G->adjWt[Current][i] > 0){
 				if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
 					v_I[i].Checked = true;	//marking  node as visited
-					v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
-					v_I[i].prev = Current;
-					enQueue(&Q, i);
+					v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];	//updting distance from root
+					v_I[i].prev = Current;	//setting parent of ith node
+					enQueue(&Q, i); 
 				}
 			}
 		}

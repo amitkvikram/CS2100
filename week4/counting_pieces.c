@@ -87,9 +87,9 @@ void MakeDot(Graph *G,v_Info *v_I){
 int BreadthFirstSearch(Graph *G){
 	v_Info *v_I = bfsv_Info(G, 0, 0);
 	int flag = 0;  	//to track if path is found or not
-	queue *Q =createQueue();
+	queue *Q =createQueue();	//Creating Queue
 	int components = 0;		//no of connected components
-	v_I[0].Checked =false;
+	v_I[0].Checked =false;	
 	for(int root = 0; root<G->V; root++){
 		if(v_I[root].Checked == false){
 			components++;
