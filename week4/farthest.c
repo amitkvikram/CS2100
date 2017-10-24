@@ -74,8 +74,8 @@ void MakeDot(Graph *G,v_Info *v_I){
 }
 
 
-void ShortestPath(v_Info *v_I, int root, int goal){
-	printf("Length of shortest path between %d and %d is: %d\n", root, goal, v_I[goal].dist);
+void ShortestPath(v_Info *v_I, int root, int goal, int max){
+	printf("Length of shortest path between %d and %d is: %d\n", root, goal, max ); //v_I[goal].dist
 	int current = goal;
 	int dist = 0;
 	printf("longes Shortest Path is: ");
@@ -107,9 +107,9 @@ int BreadthFirstSearch(Graph *G){
 			Current = dequeue(&Q);		//finding current node
 				for(int i=0; i<G->V; i++){
 					if(G->adjWt[Current][i] > 0){
-						if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
+						if(v_I[i].Checked == false){	//checking if current node has been visited before or not
 							v_I[i].Checked = true;	//marking  node as visited
-							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
+							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];	//updating distance from root
 							enQueue(&Q, i);
 						}
 					}
@@ -117,9 +117,9 @@ int BreadthFirstSearch(Graph *G){
 			}
 		}
 
-		for(int k = 0; k<G->V; k++){
+		for(int k = 0; k<G->V; k++){	//updating the diameter @longest shortest path
 			v_I[k].Checked = false;
-			if(v_I[k].dist>max){
+			if(v_I[k].dist>max){	//If distance between two pairs is greater than max distances
 				max = v_I[k].dist;
 				diameter_root= root;
 				diameter_goal = k;
@@ -131,14 +131,14 @@ int BreadthFirstSearch(Graph *G){
 		v_I[diameter_root].dist = 0;
 		enQueue(&Q, diameter_root);
 		while(!isEmptyQueue(&Q)){
-			int Current = dequeue(&Q);		//finding current node
+			int Current = dequeue(&Q);		//dequeueing current node
 			if(Current == diameter_goal) {
-				flag = 1;		//returns 1 if Current node is equal means if we have found path from root to goal
+				flag = 1;		//returns 1 if Current node is goal means if we have found path from root to goal
 				break;
 			}
 			for(int i=0; i<G->V; i++){
 				if(G->adjWt[Current][i] > 0){
-					if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
+					if(v_I[i].Checked == false){	//checking if cerrent node has been visited before or not
 						v_I[i].Checked = true;	//marking  node as visited
 						v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
 						v_I[i].prev = Current;
@@ -150,7 +150,7 @@ int BreadthFirstSearch(Graph *G){
 		
 	}
 	printf("diameter is: %d %d", diameter_root, diameter_goal);
-	ShortestPath(v_I, diameter_root, diameter_goal);
+	ShortestPath(v_I, diameter_root, diameter_goal, max);
 	MakeDot(G,v_I);
 	return flag;
 }

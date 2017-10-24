@@ -103,11 +103,3 @@ void queueFront (queue **Q){
       }
 }
 
-void queueFree(queue **Q){
-  while(!isEmptyQueue(Q)){
-    dequeue(Q);
-  }
-
-  free(*Q);
-}
-

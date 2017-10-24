@@ -1,0 +1,48 @@
+graph Egraph_3{
+	0 -- 1;
+	0 -- 2;
+	0 -- 7;
+	0 -- 9;
+	1 -- 8;
+	1 -- 9;
+	1 -- 11;
+	1 -- 12;
+	1 -- 13;
+	2 -- 9;
+	3 -- 13;
+	3 -- 14;
+	4 -- 7;
+	4 -- 14;
+	5 -- 6;
+	5 -- 10;
+	6 -- 7;
+	6 -- 12;
+	6 -- 14;
+	7 -- 14;
+	8 -- 9;
+	9 -- 11;
+	9 -- 13;
+	10 -- 11;
+	10 -- 13;
+	10 -- 14;
+	11 -- 14;
+	12 -- 13;
+	12 -- 14;
+	13 -- 14;
+	14
+	0[color=red, style=filled];
+	1[color=blue, style=filled];
+	2[color=blue, style=filled];
+	3[color=red, style=filled];
+	4[color=red, style=filled];
+	5[color=red, style=filled];
+	6[color=blue, style=filled];
+	7[color=black, style=filled];
+	8[color=red, style=filled];
+	9[color=black, style=filled];
+	10[color=blue, style=filled];
+	11[color=red, style=filled];
+	12[color=red, style=filled];
+	13[color=brown, style=filled];
+	14[color=gold, style=filled];
+}

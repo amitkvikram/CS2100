@@ -1,4 +1,5 @@
-all: counting_pieces.o path_finder.o farthest.o
+all: counting_pieces.o path
+_finder.o farthest.o
 	
 counting_pieces.o: counting_pieces.c queue.c
 	gcc -g counting_pieces.c -std=c11 -o counting_pieces.o queue.c

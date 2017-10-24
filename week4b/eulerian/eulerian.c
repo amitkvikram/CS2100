@@ -12,6 +12,7 @@
 #include<stdbool.h>
 #include "queue.h"
 #include "CircularLinkedList.h"
+#include "stack.h"
 
 struct Graph{		//Structure to store graph information
 	int **adjWt;
@@ -137,17 +138,34 @@ void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr)
 	fprintf(fp, "%s\n", "}");
 }
 
+	
+//Printing adjacency matrix	
+void printAdjacency(Graph *G){
+
+	for(int i=0; i<G->V; i++){
+		for(int j=0; j<G->V; j++){
+			printf("%d ",G->adjWt[i][j]);
+		}
+		printf("\n");
+	}
+
+}
+
+
 //finding and printing eulerian path
 void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 	Node *Head = NULL;
+	stack *Top = NULL;
         
-        int pathLength = 0;
+    int pathLength = 0;
         
 	int CurrentNode = strtNode;
+	stackPush(&Top, CurrentNode);
 	insert(&Head, CurrentNode);
 	for(int i = 0; i<G->V; i++){
 		if(G->adjWt[CurrentNode][i] > 0){
 			int temp = CurrentNode;
+			stackPush(&Top, CurrentNode);
 			CurrentNode = i;
 			insert(&Head, CurrentNode);
 			pathLength++;
@@ -161,6 +179,7 @@ void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 			//Checking if any edge containing current verex is unvisited.
 			if(G->adjWt[CurrentNode][i] > 0 && i!= strtNode){
 				int temp = CurrentNode;
+				stackPush(&Top, CurrentNode);
 				CurrentNode = i;
 				insert(&Head, CurrentNode);
 				pathLength++;
@@ -172,40 +191,40 @@ void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 		if(i == G->V){		
 			int temp = CurrentNode;
 			CurrentNode = strtNode;
+			stackPush(&Top, CurrentNode);
 			G->adjWt[temp][strtNode] =0;
 			G->adjWt[strtNode][temp] =0;
 			insert(&Head, CurrentNode);
 			pathLength++;
 			//If again reached at starting node, then checking if any edge containing starting node is unvisited
-			for(int i = 0; i<G->V; i++){
-				if(G->adjWt[CurrentNode][i] > 0){
-					int temp = CurrentNode;
-					CurrentNode = i;
-					insert(&Head, CurrentNode);
-					pathLength++;
-					G->adjWt[temp][i] =0;
-					G->adjWt[i][temp] =0;
+			int flag = 0;
+			while(!isEmpty(&Top) & flag!=1){
+				CurrentNode = stackPop(&Top);
+				for(int i = 0; i<G->V; i++){
+					flag = 1;
+					if(G->adjWt[CurrentNode][i] > 0){
+						int temp = CurrentNode;
+						stackPush(&Top, CurrentNode);
+						strtNode = CurrentNode;	
+						CurrentNode = i;
+						insert(&Head, CurrentNode);
+						pathLength++;
+						G->adjWt[temp][i] =0;
+						G->adjWt[i][temp] =0;
+						break;
+					}
 				}
 			}
-		}		
+			
+		}	
 	}
 	
 	MakeDot(G, v_I, strtNode, pathLength, &Head);
 	printf("Eulerian Circuit is: ");
 	Printlist(&Head);
+	printf("\n");
+	printAdjacency(G);
 	FreeMemory(&Head);
-}
-	
-//Printing adjacency matrix	
-void printAdjacency(Graph *G){
-
-	for(int i=0; i<G->V; i++){
-		for(int j=0; j<G->V; j++){
-			printf("%d ",G->adjWt[i][j]);
-		}
-		printf("\n");
-	}
-
 }	
 
 //Reading Graph file
