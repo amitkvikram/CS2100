@@ -1,2 +1,0 @@
-1. Enter "make" command(without quotes) in terminal
-2. There will be three output(object) file path_finder.o farthest.o counting_pieces.o

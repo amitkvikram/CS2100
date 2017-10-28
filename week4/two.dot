@@ -1,8 +1,8 @@
 graph two{
 	0 -- 5[color=red];
-	1 -- 6[color=red];
-	1 -- 7[color=red];
-	2 -- 3[color=red];
+	1 -- 6;
+	1 -- 7;
+	2 -- 3;
 	2 -- 6[color=red];
 	2 -- 8[color=red];
 	3 -- 8;

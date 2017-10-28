@@ -175,7 +175,7 @@ void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 	while(CurrentNode != strtNode){
 		int i;
 		for(i=0; i<G->V; i++){
-			//Checking if any edge containing current verex is unvisited.
+			//Checking if any edge containing current vertex is unvisited.
 			if(G->adjWt[CurrentNode][i] > 0 && i!= strtNode){
 				int temp = CurrentNode;
 				stackPush(&Top, CurrentNode);

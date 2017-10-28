@@ -37,20 +37,20 @@ Graph *CreateGraph(int V){		//Creating graph data
 	return G;
 }
 
-v_Info* bfsv_Info(Graph *G, int root, int goal){	
+v_Info* bfsv_Info(Graph *G, int root, int goal){
 	v_Info *v_InfoPtr;
 
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
-	
+
 	v_InfoPtr[root].dist = 0;
 	v_InfoPtr[root].Checked = true;
 	return v_InfoPtr;
 }
 
 void freeGraph(Graph *G, v_Info *v_I){
-	free(v_I);	
+	free(v_I);
 	for(int i=0; i<G->V; i++){
-		
+
 		free(G->adjWt[i]);
 	}
 
@@ -58,12 +58,12 @@ void freeGraph(Graph *G, v_Info *v_I){
 }
 
 //Creating dot file
-void MakeDot(Graph *G,v_Info *v_I){	
+void MakeDot(Graph *G,v_Info *v_I){
 	FILE *fp;
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
 	strcat(GraphName_cp,".dot");
-	printf("%s\n",GraphName_cp);
+	printf("Output File: %s\n",GraphName_cp);
 	fp = fopen(GraphName_cp,"w");
 	fprintf(fp, "%s%s%s\n", "graph ",G->GraphName,"{");
 	for(int i=0; i<G->V-1; i++){
@@ -83,13 +83,12 @@ void MakeDot(Graph *G,v_Info *v_I){
 	fprintf(fp, "%s\n", "}");
 }
 
-//Breadth First Search
+//Breadth First Search_____ Counting Pieces
 int BreadthFirstSearch(Graph *G){
 	v_Info *v_I = bfsv_Info(G, 0, 0);
-	int flag = 0;  	//to track if path is found or not
 	queue *Q =createQueue();	//Creating Queue
 	int components = 0;		//no of connected components
-	v_I[0].Checked =false;	
+	v_I[0].Checked =false;
 	for(int root = 0; root<G->V; root++){
 		if(v_I[root].Checked == false){
 			components++;
@@ -103,24 +102,19 @@ int BreadthFirstSearch(Graph *G){
 							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];
 							v_I[i].prev = Current;
 							enQueue(&Q, i);
-	
-						}
-	
-					}
-	
-				}
-	
-			}	
-		}
 
-		
+						}
+					}
+				}
+			}
+		}
 	}
 	MakeDot(G, v_I);
 	freeGraph(G, v_I);
 
 	return components;
 }
-	
+
 //Printing adjacency matrix
 void printAdjacency(Graph *G){
 
@@ -131,7 +125,7 @@ void printAdjacency(Graph *G){
 		printf("\n");
 	}
 
-}	
+}
 
 
 
@@ -143,7 +137,7 @@ Graph* Read(FILE **fp){
 	int num_vertices;
 	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
 	Graph* G = CreateGraph(num_vertices);
-	
+
 	for(int i=0;i<G->V; i++){
 		for(int j=0;j<G->V;j++){
 			fscanf(*fp, "%1d", &G->adjWt[i][j]);
@@ -155,23 +149,23 @@ Graph* Read(FILE **fp){
 	printAdjacency(G);
 	fclose(*fp);
 	return G;
-}	
+}
 
 int main(){
 	char FileName[50];
-	printf("Enter Filename");
+	printf("Enter Filename: ");
 	scanf("%s", FileName);
-	
+
 	FILE *fp;
 	fp=fopen(FileName, "r");	//Opening .txt file
-	
-	 
+
+
 	 if(fp==0)	//Checking for file error in opening
 	 {
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	
+
 	Graph *G = Read(&fp);
 	int components = BreadthFirstSearch(G);
 	printf("No of components: %d\n",components);

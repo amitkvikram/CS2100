@@ -1,13 +1,16 @@
-all: counting_pieces.o path_finder.o farthest.o
-	
-counting_pieces.o: counting_pieces.c queue.c
-	gcc -g counting_pieces.c -std=c11 -o counting_pieces.o queue.c
+all: counting_pieces.out path_finder.out farthest.out
 
-farthest.o: farthest.c queue.c
-	gcc -g farthest.c -std=c11 -o farthest.o queue.c
+counting_pieces.out: counting_pieces.c queue.o
+	gcc -ggdb -Wall counting_pieces.c queue.o -std=c11 -o counting_pieces.out
 
-path_finder.o: path_finder.c queue.c
-	gcc -g path_finder.c -std=c11 -o path_finder.o queue.c
-	
+farthest.out: farthest.c queue.o
+	gcc -ggdb farthest.c queue.o -std=c11 -o farthest.out
+
+path_finder.out: path_finder.c queue.o
+	gcc -ggdb -Wall path_finder.c queue.o -std=c11 -o path_finder.out
+
+queue.o:queue.c
+	gcc -c queue.c
+
 clean:
-	rm counting_pieces.o path_finder.o farthest.o
+	rm counting_pieces.out path_finder.out farthest.out

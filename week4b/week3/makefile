@@ -1,7 +1,7 @@
-all: hamiltonian
+all: hamiltonian.out
 	
-hamiltonian: hamiltonian.o queue.o CircularLinkedList.o double_linked_list.o
-	gcc -ggdb -Wall hamiltonian.o queue.o CircularLinkedList.o double_linked_list.o -std=c11 -o hamiltonian 
+hamiltonian.out: hamiltonian.o queue.o CircularLinkedList.o double_linked_list.o
+	gcc -ggdb -Wall hamiltonian.o queue.o CircularLinkedList.o double_linked_list.o -std=c11 -o hamiltonian.out 
 
 hamiltonian.o: hamiltonian.c 
 	gcc -c hamiltonian.c 

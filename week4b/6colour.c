@@ -18,8 +18,8 @@ struct Graph{		//Structure to store graph information
 	int **adjWt;
 	int V;    	   //V: no of vertices
 	char GraphName[100];
-	int isolated;
-	int components;
+	int isolated;	//No of isolated vertices
+	int components;		//No. of Connected Components
 };
 
 struct v_Info{			//structure to store information about vertices during BFS

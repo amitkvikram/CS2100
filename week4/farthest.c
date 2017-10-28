@@ -41,14 +41,14 @@ v_Info* bfsv_Info(Graph *G){
 	v_Info *v_InfoPtr;
 
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
-	
+
 	v_InfoPtr[0].dist = 0;
 	v_InfoPtr[0].Checked = true;
 	return v_InfoPtr;
 }
 
 //Creating dot file
-void MakeDot(Graph *G,v_Info *v_I){	
+void MakeDot(Graph *G,v_Info *v_I){
 	FILE *fp;
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
@@ -75,15 +75,14 @@ void MakeDot(Graph *G,v_Info *v_I){
 
 
 void ShortestPath(v_Info *v_I, int root, int goal, int max){
-	printf("Length of shortest path between %d and %d is: %d\n", root, goal, max ); //v_I[goal].dist
+	printf("Length of Longest shortest path between %d and %d is: %d\n", root, goal, max ); //v_I[goal].dist
 	int current = goal;
-	int dist = 0;
-	printf("longes Shortest Path is: ");
+	printf("longest Shortest Path is: ");
 
 	do{
 		printf("%d ",current);
 		v_I[current].connected_to_goal = 1;
-		current = v_I[current].prev; 
+		current = v_I[current].prev;
 	}while(current!= root);
 
 	printf("%d\n",current);
@@ -97,37 +96,40 @@ int BreadthFirstSearch(Graph *G){
 	int Current;
 
 	v_I[0].Checked =false;
+	int i=0;
 	int max = 0;
 	int diameter_root =0, diameter_goal =0;
 	for(int root = 0; root<G->V; root++){
 		v_I[root].dist = 0;
-		if(v_I[root].Checked == false){
-			enQueue(&Q, root);
-			while(!isEmptyQueue(&Q)){
-			Current = dequeue(&Q);		//finding current node
-				for(int i=0; i<G->V; i++){
-					if(G->adjWt[Current][i] > 0){
-						if(v_I[i].Checked == false){	//checking if current node has been visited before or not
-							v_I[i].Checked = true;	//marking  node as visited
-							v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];	//updating distance from root
-							enQueue(&Q, i);
+		enQueue(&Q, root);
+		v_I[root].Checked= true;
+		while(!isEmptyQueue(&Q)){
+				Current = dequeue(&Q);		//finding current node
+					for(int i=0; i<G->V; i++){
+						if(G->adjWt[Current][i] > 0){
+							if(v_I[i].Checked == false){	//checking if current node has been visited before or not
+								v_I[i].Checked = true;	//marking  node as visited
+								v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];	//updating distance from root
+								enQueue(&Q, i);
+							}
 						}
+
 					}
+			}
+				for(int k = 0; k<G->V; k++){	//updating the diameter @longest shortest path
+						v_I[k].Checked = false;
+						if(v_I[k].dist>max){	//If distance between two pairs is greater than max distances
+							max = v_I[k].dist;
+							diameter_root= root;
+							diameter_goal = k;
+						}
+						v_I[k].dist = 0;
 				}
-			}
+
+
 		}
 
-		for(int k = 0; k<G->V; k++){	//updating the diameter @longest shortest path
-			v_I[k].Checked = false;
-			if(v_I[k].dist>max){	//If distance between two pairs is greater than max distances
-				max = v_I[k].dist;
-				diameter_root= root;
-				diameter_goal = k;
-				
-			}
-			v_I[k].dist = 0;
-		}
-
+ 		printf("diameter_root: %d diameter_goal: %d\n",diameter_root, diameter_goal );
 		v_I[diameter_root].dist = 0;
 		enQueue(&Q, diameter_root);
 		while(!isEmptyQueue(&Q)){
@@ -146,15 +148,15 @@ int BreadthFirstSearch(Graph *G){
 					}
 				}
 			}
-		}
-		
-	}
+}
+
+
 	printf("diameter is: %d %d", diameter_root, diameter_goal);
 	ShortestPath(v_I, diameter_root, diameter_goal, max);
 	MakeDot(G,v_I);
 	return flag;
 }
-	
+
 void printAdjacency(Graph *G){
 
 	for(int i=0; i<G->V; i++){
@@ -164,7 +166,7 @@ void printAdjacency(Graph *G){
 		printf("\n");
 	}
 
-}	
+}
 
 
 
@@ -176,7 +178,7 @@ Graph* Read(FILE **fp){
 	int num_vertices;
 	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
 	Graph* G = CreateGraph(num_vertices);
-	
+
 	for(int i=0;i<G->V; i++){
 		for(int j=0;j<G->V;j++){
 			fscanf(*fp, "%1d", &G->adjWt[i][j]);
@@ -187,25 +189,24 @@ Graph* Read(FILE **fp){
 
 	printAdjacency(G);
 	return G;
-}	
+}
 
 int main(){
 	char FileName[50];
 	printf("Enter Filename: ");
 	scanf("%s", FileName);
-	
+
 	FILE *fp;
 	fp=fopen(FileName, "r");	//Opening .txt file
-	
-	 
+
+
 	 if(fp==0)	//Checking for file error in opening
 	 {
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	
+
 	Graph *G = Read(&fp);
-	int root, goal;		//Aim is to search if path between root and goal exists
-	int flag = BreadthFirstSearch(G);
+	BreadthFirstSearch(G);
 	return 0;
 }
