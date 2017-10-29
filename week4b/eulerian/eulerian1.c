@@ -141,7 +141,7 @@ void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr)
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
 	strcat(GraphName_cp,"new.dot");
-	printf("%s\n",GraphName_cp);
+	printf("Output: %s\n",GraphName_cp);
 	fp = fopen(GraphName_cp,"w");
 	fprintf(fp, "%s%s%s\n", "digraph ",G->GraphName,"{");
 	int temp = strtNode;
@@ -168,23 +168,17 @@ void printAdjacency(Graph *G){
 }
 
 void PushEulerian(Graph *G, v_Info *v_I, int strtNode, Node **Head, int *pathLength,int index){
-	printf("root1: %d ", strtNode);
 	int CurrentNode = strtNode;
 	do{
 		for(int i = 0; i<G->V; i++){
 			if(G->adjWt[CurrentNode][i] == 1){
-				printf("CurrentNode: %d i: %d\n",CurrentNode, i);
-				if(CurrentNode == 7){
-					printf("Check: %d\n",G->adjWt[7][6]);
-				}
+				// printf("CurrentNode: %d i: %d\n",CurrentNode, i);
 				*pathLength = *pathLength +1;
 				G->adjWt[CurrentNode][i] = 0;
 				G->adjWt[i][CurrentNode] = 0;
 				CurrentNode = i;
-				// printf("CurrentNode: %d\n",G->adjWt[CurrentNode][i]);
 				InsertAtGivenPosition(Head, CurrentNode, index);
 				if(index!=-1) index++;
-				printf("Index: %d\n",index);
 				Printlist(Head);
 				v_I[i].edges--;
 				v_I[CurrentNode].edges--;
@@ -192,27 +186,17 @@ void PushEulerian(Graph *G, v_Info *v_I, int strtNode, Node **Head, int *pathLen
 				break;
 			}
 		}
-		printf("Out\n");
 	}while(CurrentNode!=strtNode);
-	// insert(Head, CurrentNode);
-	Printlist(Head);
+	// Printlist(Head);
 	for(int i = 0; i<G->V; i++){
-		// printf("i,edges: %d %d\n",i, v_I[i].edges );
 		if(v_I[i].Checked == true){
-			// printf("Yes \n");
 			for(int j = 0; j<v_I[i].edges/2; j++){
-				printf("Yes1 i: %d\n",i);
 				int index1 = search(Head, i);
-				printf("index: %d\n",index1);
 				PushEulerian(G, v_I,  i, Head, pathLength, index1);
 			}
 		}
 	}
 }
-
-// void SingleLoopEulerian(Graph *G, v_Info v_I, int strtNode){
-//
-// }
 
 //finding and printing eulerian path
 void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
@@ -223,7 +207,7 @@ void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
 	insert(&Head, CurrentNode);
 	v_I[CurrentNode].Checked = true;
 	PushEulerian(G, v_I, CurrentNode, &Head, &pathLength,-1);
-	printf("pathLength: %d", pathLength);
+	printf("pathLength: %d\n", pathLength);
 	MakeDot(G, v_I, strtNode, pathLength, &Head);
 	printf("Eulerian Circuit is: ");
 	Printlist(&Head);
@@ -269,12 +253,9 @@ int main(){
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	printf("__1__\n");
 	Graph *G = Read(&fp);
-	printf("__2__\n");
 	fclose(fp);
 	v_Info *v_I = bfsv_Info(G, 0, 0);
-	printf("__3__\n");
 	if(!isEulerian(G, v_I)) {
 		printf("status: Eulerian Circuit doesn't exist\n");
 		return 0;
