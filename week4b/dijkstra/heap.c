@@ -4,16 +4,23 @@
 #include<limits.h>
 #include<stdbool.h>
 
+struct arr{
+	int value;
+	int index;
+};
+
+typedef struct arr arr;
+
 struct heap{  //min heap
-  int *array;
+  arr *array;
   int count;  //no of elements in a Heap
   int capacity;
-}
+};
 
 typedef struct heap heap;
 
-void swap(int *a, int *b){
-  int temp = *a;
+void swap(arr *a, arr *b){
+  arr temp = *a;
   *a = *b;
   *b = temp;
 }
@@ -23,22 +30,25 @@ heap *createHeap(int capacity){
   h = malloc(sizeof(heap));
   h->count = 0;
   h->capacity = capacity;
-  h->array = malloc(sizeof(int)*h->capacity);
+  h->array = malloc(sizeof(arr)*h->capacity);
   return h;
 }
 
-int left(int i) return (2*i + 1);
-int right(int i) return (2*i + 2);
-
+int left(int i) {
+	return (2*i + 1);
+}
+int right(int i){
+	return (2*i + 2);
+}
 void minHeapify(heap **h, int i){
   int l_child = left(i);
   int r_child = right(i);
   int smallest = i;
-  if(l<h->count && h->array[l_child] < h[i]){
+  if(l_child< (*h)->count && (*h)->array[l_child].value < (*h)->array[i].value){
     smallest = l_child;
   }
 
-  if(r < (*h)->count && (*h)->array[r_child] < h[smallest]){
+  if(r_child < (*h)->count && (*h)->array[r_child].value < (*h)->array[smallest].value){
     smallest = r_child;
   }
 
@@ -48,29 +58,46 @@ void minHeapify(heap **h, int i){
   }
 }
 
-void heapInsert(heap **h, int value){
-  if(h->count == 0){
+void heapInsert(heap **h, int value, int index){
+  if((*h)->count == 0){
     (*h)->count++;
-    (*h)->array[0] = value;
+    (*h)->array[0].value = value;
+    (*h)->array[0].index= index;
     return;
   }
 
   (*h)->count++;
   int i = (*h)->count-1;
-  while(i>=0 && data < (*h)->array[(i-1)+2]){
-    (*h)->array[i] = (*h)-array[(i-1)/2];
+  while(i>=0 && value < (*h)->array[(i-1)+2].value){
+    (*h)->array[i] = (*h)->array[(i-1)/2];
     i = (i-1)/2;
   }
 
-  (*h)->array[i]= data;
+  (*h)->array[i].value= value;
+  (*h)->array[i].index= index;
 }
 
-int popHeapMin(heap **h){
-  if(h->count == 0){
-    return -1;
+arr popHeapMin(heap **h){
+  if((*h)->count == 0){
+  	arr temp;
+  	temp.value = -1;
+  	temp.index = -1;
+    return temp;
   }
 
-  int data = (*h)->array[0];
-  (*h)->array[0] = h->array[(*h)->count-1];
+  arr data = (*h)->array[0];
+  (*h)->array[0] = (*h)->array[(*h)->count-1];
   (*h)->count--;
+  
+  minHeapify(h, 0);
+  
+  return data;
+}
+
+int isEmptyHeap(heap **h){
+	if((*h)->count == 0){
+		return 1;
+	}
+	
+	return 0;
 }

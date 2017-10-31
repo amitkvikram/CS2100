@@ -1,16 +1,14 @@
 /*
    Name: Amit Vikram Singh
    Roll No: 111601001
-   Date: 10/10/2017
-   Task: eulerian.c
-   Running Programme: enter "make" command in terminal, and output(object) file eulerian.o will be created.
+   Date: 31/10/2017
+   Task: dijkstra.c
 */
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<limits.h>
 #include<stdbool.h>
-#include "heap.h"
 
 struct Graph{		//Structure to store graph information
 	int **adjWt;
@@ -24,11 +22,7 @@ struct v_Info{			//structure to store information about vertices during BFS
 		int dist;	//distance of vertex from root
 		bool Checked;
 		int prev;
-};
-
-struct Pair{
-	Graph *G; 
-	heap *h;
+		int connected_to_goal;
 };
 
 typedef struct Graph Graph;
@@ -55,43 +49,99 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 	  for(int i = 0; i<G->V; i++){
 	    v_InfoPtr[i].dist = 100000;
 	    v_InfoPtr[i].Checked = false;
+	    v_InfoPtr[i].connected_to_goal = 0;
 	  }
 	v_InfoPtr[root].dist = 0;
-	v_InfoPtr[root].Checked = true;
+	v_InfoPtr[root].prev = 0;
 	return v_InfoPtr;
 }
 
 //Creating dot file
-void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr){
+void MakeDot(Graph *G,v_Info *v_I, int x, int y){
 	FILE *fp;
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
 	strcat(GraphName_cp,"new.dot");
 	printf("Output: %s\n",GraphName_cp);
 	fp = fopen(GraphName_cp,"w");
-	fprintf(fp, "%s%s%s\n", "digraph ",G->GraphName,"{");
-	int temp = strtNode;
-	for(int i=1; i<pathLength+1; i++){
-		int current = ValueAtGivenPosition(Headptr,i);
-		fprintf(fp, "%s%d -> %d%s","\t",temp,current,"[color=red];\n");	//coloring path which was traced  in BFS
-		temp = current;
+	fprintf(fp, "%s%s%s\n", "graph ",G->GraphName,"{");
+	for(int i=0; i< G->V-1; i++){
+		for(int j=i; j<G->V; j++){
+			if(G->adjWt[i][j]>0){
+			if(v_I[j].connected_to_goal == 1 && (i == v_I[j].prev || j == v_I[i].prev) && v_I[i].connected_to_goal == 1){
+			 fprintf(fp, "%s%d -- %d%s%d%s","\t",i,j,"[color =red][label=",G->adjWt[i][j],"];\n");
+			 }
+			else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");
+			}
+		}
 	}
 	fprintf(fp, "%s%d%s","\t",G->V-1,"\n");
+
 	fprintf(fp, "%s\n", "}");
 }
 
-void dijkstra(Graph *G, v_Info *v_I, heap *h, int x, int y){
-	while(!isEmptyghgfhfghdfghfdhfgd
-		arr data = popHeapMin(&h);
-		v_I[data.index].visited = true;
-		
-		for(int i = 0; i<G->V; i++){
-			int temp = v_I[data.index].dist + G->adjWt[data.index][i];
-			if(temp < v_I[i].dist){
-				v_I[i].prev = data.index;
-				h->array[i].
-		
+//Checking if all vertex has been visited
+int allVisited(Graph *G, v_Info *v_I){
+	for(int i = 0; i<G->V; i++){
+		if(v_I[i].Checked == false) return 0;
+	}
 	
+	return 1;
+}
+
+//To find the vertex which is unvisted and is at the minimum distance from source
+int minArray(Graph *G, v_Info *v_I){
+	int min = 100000;
+	int index = 0;
+	for(int i =0; i<G->V; i++){
+		if(v_I[i].Checked == false && v_I[i].dist<min)
+		{
+			min = v_I[i].dist;
+			index = i;
+		}
+	}
+	
+	return index;
+}
+
+//printing shortest path between x and y
+void printPath(Graph *G, v_Info *v_I, int x, int y){
+	int count = v_I[y].dist;
+	while(y!=x){
+		printf("%d ",y);
+		v_I[y].connected_to_goal = 1;
+		y = v_I[y].prev;
+	}
+	
+	printf("%d \n",y);
+	v_I[y].connected_to_goal = 1;
+}
+
+//dijkstra algorihtm to find shortest path between x and y
+void dijkstra(Graph *G, v_Info *v_I,int x, int y){
+	while(!(allVisited(G, v_I))){
+		int minDist = minArray(G, v_I);
+		v_I[minDist].Checked = true;
+		
+		for(int i =0; i<G->V; i++){
+			if(G->adjWt[minDist][i]>0 && v_I[i].Checked ==false){
+			
+				int temp = v_I[minDist].dist + G->adjWt[minDist][i];
+				if(temp < v_I[i].dist){   //Checking if a new shortes path to vertex i exists
+					v_I[i].prev = minDist;
+					v_I[i].dist = temp;
+				}
+			}
+		}
+	}
+	
+	printf("Distance: %d\n", v_I[y].dist);
+	printf("Path is: ");
+	
+	printPath(G, v_I,x, y);//fundtion to print path
+	MakeDot(G, v_I, x, y); //fundtion to make dot file
+
+}	
 
 //Printing adjacency matrix
 void printAdjacency(Graph *G){
@@ -114,24 +164,16 @@ Graph* Read(FILE **fp){
 	int num_vertices;
 	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
 	Graph* G = CreateGraph(num_vertices);
-  	heap *h = createHeap(num_vertices);
 
 	for(int i=0;i<G->V; i++){	//reading adjacecy matrix
 		for(int j=0;j<G->V;j++){
 			fscanf(*fp, "%1d", &G->adjWt[i][j]);
-			heapInsert(&h, 10000, i);
 		}
 	}
-	
-	h->array[0].value = 0;
-
 	strcpy(G->GraphName,GraphName);
 
 	printAdjacency(G);
-	struct Pair pair;
-	pair->G = G;
-	pair->h = h;
-	return pair;
+	return G;
 }
 
 //main begins here
@@ -149,15 +191,14 @@ int main(){
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	struct Pair pair = Read(&fp);
-	fclose(fp);
-	v_Info *v_I = bfsv_Info(G, 0, 0);
-	Graph *G = pair->G;
-	heap *h = pair->h;
+	 
+	Graph *G = Read(&fp);
 	int x, y;
 	printf("Enter x and y: ");
 	scanf("%d%d", &x, &y);
-	dijkstra(G, v_I, h, x, y);
+	fclose(fp);
+	v_Info *v_I = bfsv_Info(G, x, y);
+	dijkstra(G, v_I, x, y);
 	return 0;
 
 }
