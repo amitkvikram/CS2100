@@ -108,15 +108,10 @@ void Components(Graph *G, v_Info *v_I){
 							enQueue(&Q, i);
 
 						}
-
 					}
-
 				}
-
 			}
 		}
-
-
 	}
 	free(Q);
 	for(int i=0; i<G->V; i++){
