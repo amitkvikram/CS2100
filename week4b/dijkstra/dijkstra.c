@@ -20,7 +20,7 @@ struct Graph{		//Structure to store graph information
 	int components;
 };
 
-struct v_Info{			//structure to store information about vertices during BFS
+struct v_Info{			//structure to store information about vertices
 		int dist;	//distance of vertex from root
 		bool Checked;
 		int prev;
@@ -86,6 +86,17 @@ void printAdjacency(Graph *G){
 	}
 
 }
+
+void dijkstra(Graph *G, v_Info *v_I, heap *h, int x, int y){
+	while(!isEmptyghgfhfghdfghfdhfgd
+		arr data = popHeapMin(&h);
+		v_I[data.index].visited = true;
+
+		for(int i = 0; i<G->V; i++){
+			int temp = v_I[data.index].dist + G->adjWt[data.index][i];
+			if(temp < v_I[i].dist){
+				v_I[i].prev = data.index;
+				h->array[i].
 
 //Reading Graph file
 Graph* Read(FILE **fp){
