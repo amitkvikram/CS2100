@@ -11,6 +11,9 @@
 #include<limits.h>
 #include<stdbool.h>
 #include "heap.h"
+#include<time.h>
+
+clock_t clock(void);
 
 struct Graph{		//Structure to store graph information
 	int **adjWt;
@@ -20,10 +23,11 @@ struct Graph{		//Structure to store graph information
 	int components;
 };
 
-struct v_Info{			//structure to store information about vertices
+struct v_Info{			//structure to store information about vertices during BFS
 		int dist;	//distance of vertex from root
 		bool Checked;
 		int prev;
+		int connected_to_goal;
 };
 
 typedef struct Graph Graph;
@@ -48,29 +52,34 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
 
   for(int i = 0; i<G->V; i++){
-    v_InfoPtr[i].dist = INT_MAX;
+    v_InfoPtr[i].dist = 0;
+		v_InfoPtr[i].Checked = false;
   }
 	v_InfoPtr[root].dist = 0;
-	v_InfoPtr[root].Checked = true;
 	return v_InfoPtr;
 }
 
 //Creating dot file
-void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr){
+void MakeDot(Graph *G,v_Info *v_I, int x, int y){
 	FILE *fp;
 	char GraphName_cp[50];
 	strcpy(GraphName_cp,G->GraphName);
 	strcat(GraphName_cp,"new.dot");
 	printf("Output: %s\n",GraphName_cp);
 	fp = fopen(GraphName_cp,"w");
-	fprintf(fp, "%s%s%s\n", "digraph ",G->GraphName,"{");
-	int temp = strtNode;
-	for(int i=1; i<pathLength+1; i++){
-		int current = ValueAtGivenPosition(Headptr,i);
-		fprintf(fp, "%s%d -> %d%s","\t",temp,current,"[color=red];\n");	//coloring path which was traced  in BFS
-		temp = current;
+	fprintf(fp, "%s%s%s\n", "graph ",G->GraphName,"{");
+	for(int i=0; i< G->V-1; i++){
+		for(int j=i; j<G->V; j++){
+			if(G->adjWt[i][j]>0){
+			if(v_I[j].connected_to_goal == 1 && (i == v_I[j].prev || j == v_I[i].prev) && v_I[i].connected_to_goal == 1){
+			 fprintf(fp, "%s%d -- %d%s%d%s","\t",i,j,"[color =red][label=",G->adjWt[i][j],"];\n");
+			 }
+			else fprintf(fp, "%s%d -- %d%s","\t",i,j,";\n");
+			}
+		}
 	}
 	fprintf(fp, "%s%d%s","\t",G->V-1,"\n");
+
 	fprintf(fp, "%s\n", "}");
 }
 
@@ -79,6 +88,7 @@ void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr)
 void printAdjacency(Graph *G){
 
 	for(int i=0; i<G->V; i++){
+		printf("%d: ",i);
 		for(int j=0; j<G->V; j++){
 			printf("%d ",G->adjWt[i][j]);
 		}
@@ -87,16 +97,62 @@ void printAdjacency(Graph *G){
 
 }
 
-void dijkstra(Graph *G, v_Info *v_I, heap *h, int x, int y){
-	while(!isEmptyghgfhfghdfghfdhfgd
-		arr data = popHeapMin(&h);
-		v_I[data.index].visited = true;
+void printPath(Graph *G, v_Info *v_I, int x, int y){
+	while(y!=x){
+		printf("%d ",y);
+		v_I[y].connected_to_goal = 1;
+		y = v_I[y].prev;
+	}
+
+	printf("%d \n",y);
+	v_I[y].connected_to_goal = 1;
+}
+
+void dijkstra(Graph *G, v_Info *v_I, heap **h, int x, int y){
+
+	clock_t t;
+	 t = clock();
+
+	while(!isEmptyHeap(h)){
+		// printf("value: %d: ", popHeapMin(h).value);
+		arr data = popHeapMin(h);
+
+		v_I[data.index].Checked = true;
 
 		for(int i = 0; i<G->V; i++){
-			int temp = v_I[data.index].dist + G->adjWt[data.index][i];
-			if(temp < v_I[i].dist){
-				v_I[i].prev = data.index;
-				h->array[i].
+			if(v_I[i].Checked == false && G->adjWt[data.index][i] > 0){
+				int loc = (*h)->hashTable[i];
+				// printf("i: %d location: %d\n",i, loc);
+				int temp = data.value + G->adjWt[data.index][i];
+				if(temp < (*h)->array[loc].value){
+					(*h)->array[loc].value = temp;
+					minHeapifyUp(h, loc);
+					v_I[i].dist = temp;
+					v_I[i].prev = data.index;
+				}
+			}
+		}
+
+	}
+
+	printf("Path is: ");
+
+	printPath(G, v_I,x, y);//fundtion to print path
+	MakeDot(G, v_I, x, y); //fundtion to make dot file
+	t = clock() - t;
+	double time_taken = ((double)t) / CLOCKS_PER_SEC;
+	printf("Time Taken: %f\n",time_taken );
+}
+
+void insertHeap(Graph *G,v_Info *v_I, heap **h, int x){
+	for(int i = 0; i<G->V; i++){
+		heapInsert(h, 1000, i);
+	}
+
+	(*h)->array[x].value = 0;
+	swap(h, x, 0);
+	// printHeap(h);
+}
 
 //Reading Graph file
 Graph* Read(FILE **fp){
@@ -107,12 +163,10 @@ Graph* Read(FILE **fp){
 	int num_vertices;
 	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
 	Graph* G = CreateGraph(num_vertices);
-  queue *Q = createQueue();
 
 	for(int i=0;i<G->V; i++){	//reading adjacecy matrix
 		for(int j=0;j<G->V;j++){
 			fscanf(*fp, "%1d", &G->adjWt[i][j]);
-      enQueue(&Q, G->adjWt[i][j])
 		}
 	}
 
@@ -138,18 +192,15 @@ int main(){
 	  	return(1);
 	 }
 	Graph *G = Read(&fp);
-	fclose(fp);
 	v_Info *v_I = bfsv_Info(G, 0, 0);
-	if(!isEulerian(G, v_I)) {
-		printf("status: Eulerian Circuit doesn't exist\n");
-		return 0;
-	}
-	else printf("status: Eulerian Circuit Exist\n");
+	printf("Enter x and y: ");
+	int x, y;
+	scanf("%d%d",&x,&y);
+	heap *h = createHeap(G->V);
+	insertHeap(G, v_I, &h, x);
+	fclose(fp);
 
-	int strtNode;
-	printf("Enter starting node: ");
-	scanf("%d", &strtNode);
-	PrintEulerian(G, v_I, strtNode);
+	dijkstra(G, v_I, &h, x, y);
 	return 0;
 
 }

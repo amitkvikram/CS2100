@@ -9,6 +9,9 @@
 #include<string.h>
 #include<limits.h>
 #include<stdbool.h>
+#include<time.h>
+
+clock_t clock(void);
 
 struct Graph{		//Structure to store graph information
 	int **adjWt;
@@ -118,6 +121,8 @@ void printPath(Graph *G, v_Info *v_I, int x, int y){
 
 //dijkstra algorihtm to find shortest path between x and y
 void dijkstra(Graph *G, v_Info *v_I,int x, int y){
+	clock_t t;
+	 t = clock();
 	while(!(allVisited(G, v_I))){
 		int minDist = minArray(G, v_I);
 		v_I[minDist].Checked = true;
@@ -134,11 +139,14 @@ void dijkstra(Graph *G, v_Info *v_I,int x, int y){
 		}
 	}
 
-	printf("Distance: %d\n", v_I[y].dist);
+	// printf("Distance: %d\n", v_I[y].dist);
 	printf("Path is: ");
 
 	printPath(G, v_I,x, y);//fundtion to print path
 	MakeDot(G, v_I, x, y); //fundtion to make dot file
+	t = clock() - t;
+	double time_taken = ((double)t)/ CLOCKS_PER_SEC;
+	printf("Time Taken: %f\n",time_taken );
 
 }
 
