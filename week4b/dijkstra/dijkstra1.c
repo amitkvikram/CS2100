@@ -85,7 +85,7 @@ int allVisited(Graph *G, v_Info *v_I){
 	for(int i = 0; i<G->V; i++){
 		if(v_I[i].Checked == false) return 0;
 	}
-	
+
 	return 1;
 }
 
@@ -100,19 +100,18 @@ int minArray(Graph *G, v_Info *v_I){
 			index = i;
 		}
 	}
-	
+
 	return index;
 }
 
 //printing shortest path between x and y
 void printPath(Graph *G, v_Info *v_I, int x, int y){
-	int count = v_I[y].dist;
 	while(y!=x){
 		printf("%d ",y);
 		v_I[y].connected_to_goal = 1;
 		y = v_I[y].prev;
 	}
-	
+
 	printf("%d \n",y);
 	v_I[y].connected_to_goal = 1;
 }
@@ -122,10 +121,10 @@ void dijkstra(Graph *G, v_Info *v_I,int x, int y){
 	while(!(allVisited(G, v_I))){
 		int minDist = minArray(G, v_I);
 		v_I[minDist].Checked = true;
-		
+
 		for(int i =0; i<G->V; i++){
 			if(G->adjWt[minDist][i]>0 && v_I[i].Checked ==false){
-			
+
 				int temp = v_I[minDist].dist + G->adjWt[minDist][i];
 				if(temp < v_I[i].dist){   //Checking if a new shortes path to vertex i exists
 					v_I[i].prev = minDist;
@@ -134,19 +133,20 @@ void dijkstra(Graph *G, v_Info *v_I,int x, int y){
 			}
 		}
 	}
-	
+
 	printf("Distance: %d\n", v_I[y].dist);
 	printf("Path is: ");
-	
+
 	printPath(G, v_I,x, y);//fundtion to print path
 	MakeDot(G, v_I, x, y); //fundtion to make dot file
 
-}	
+}
 
 //Printing adjacency matrix
 void printAdjacency(Graph *G){
 
 	for(int i=0; i<G->V; i++){
+		printf("%d: ",i);
 		for(int j=0; j<G->V; j++){
 			printf("%d ",G->adjWt[i][j]);
 		}
@@ -191,7 +191,7 @@ int main(){
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	 
+
 	Graph *G = Read(&fp);
 	int x, y;
 	printf("Enter x and y: ");

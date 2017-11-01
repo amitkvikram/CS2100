@@ -26,11 +26,6 @@ struct v_Info{			//structure to store information about vertices during BFS
 		int prev;
 };
 
-struct Pair{
-	Graph *G; 
-	heap *h;
-};
-
 typedef struct Graph Graph;
 typedef struct v_Info v_Info;
 
@@ -52,10 +47,9 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 
 	v_InfoPtr = (v_Info*)malloc(G->V * sizeof(v_Info));
 
-	  for(int i = 0; i<G->V; i++){
-	    v_InfoPtr[i].dist = 100000;
-	    v_InfoPtr[i].Checked = false;
-	  }
+  for(int i = 0; i<G->V; i++){
+    v_InfoPtr[i].dist = INT_MAX;
+  }
 	v_InfoPtr[root].dist = 0;
 	v_InfoPtr[root].Checked = true;
 	return v_InfoPtr;
@@ -80,18 +74,6 @@ void MakeDot(Graph *G,v_Info *v_I, int strtNode, int pathLength, Node **Headptr)
 	fprintf(fp, "%s\n", "}");
 }
 
-void dijkstra(Graph *G, v_Info *v_I, heap *h, int x, int y){
-	while(!isEmptyghgfhfghdfghfdhfgd
-		arr data = popHeapMin(&h);
-		v_I[data.index].visited = true;
-		
-		for(int i = 0; i<G->V; i++){
-			int temp = v_I[data.index].dist + G->adjWt[data.index][i];
-			if(temp < v_I[i].dist){
-				v_I[i].prev = data.index;
-				h->array[i].
-		
-	
 
 //Printing adjacency matrix
 void printAdjacency(Graph *G){
@@ -114,24 +96,19 @@ Graph* Read(FILE **fp){
 	int num_vertices;
 	fscanf(*fp, "%d", &num_vertices);	//scannig number of vertices in the graph
 	Graph* G = CreateGraph(num_vertices);
-  	heap *h = createHeap(num_vertices);
+  queue *Q = createQueue();
 
 	for(int i=0;i<G->V; i++){	//reading adjacecy matrix
 		for(int j=0;j<G->V;j++){
 			fscanf(*fp, "%1d", &G->adjWt[i][j]);
-			heapInsert(&h, 10000, i);
+      enQueue(&Q, G->adjWt[i][j])
 		}
 	}
-	
-	h->array[0].value = 0;
 
 	strcpy(G->GraphName,GraphName);
 
 	printAdjacency(G);
-	struct Pair pair;
-	pair->G = G;
-	pair->h = h;
-	return pair;
+	return G;
 }
 
 //main begins here
@@ -149,15 +126,19 @@ int main(){
 	  	printf("Error in opening the file %s.\n", FileName);
 	  	return(1);
 	 }
-	struct Pair pair = Read(&fp);
+	Graph *G = Read(&fp);
 	fclose(fp);
 	v_Info *v_I = bfsv_Info(G, 0, 0);
-	Graph *G = pair->G;
-	heap *h = pair->h;
-	int x, y;
-	printf("Enter x and y: ");
-	scanf("%d%d", &x, &y);
-	dijkstra(G, v_I, h, x, y);
+	if(!isEulerian(G, v_I)) {
+		printf("status: Eulerian Circuit doesn't exist\n");
+		return 0;
+	}
+	else printf("status: Eulerian Circuit Exist\n");
+
+	int strtNode;
+	printf("Enter starting node: ");
+	scanf("%d", &strtNode);
+	PrintEulerian(G, v_I, strtNode);
 	return 0;
 
 }

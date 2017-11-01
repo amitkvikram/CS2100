@@ -3,6 +3,7 @@
 #include<string.h>
 #include<limits.h>
 #include<stdbool.h>
+//MIN HEAP
 
 struct arr{
 	int value;
@@ -59,16 +60,16 @@ void minHeapify(heap **h, int i){
 }
 
 void heapInsert(heap **h, int value, int index){
-  if((*h)->count == 0){
-    (*h)->count++;
-    (*h)->array[0].value = value;
+  if((*h)->count == 0){     //heap is empty
+    (*h)->count++;          //now heap have 1 element so incrementing count
+    (*h)->array[0].value = value; //setting first element as value
     (*h)->array[0].index= index;
     return;
   }
 
-  (*h)->count++;
-  int i = (*h)->count-1;
-  while(i>=0 && value < (*h)->array[(i-1)+2].value){
+  (*h)->count++;    //incrementing count
+  int i = (*h)->count-1;  //i is last element
+  while(i>=0 && value < (*h)->array[(i-1)/2].value){
     (*h)->array[i] = (*h)->array[(i-1)/2];
     i = (i-1)/2;
   }
@@ -88,9 +89,9 @@ arr popHeapMin(heap **h){
   arr data = (*h)->array[0];
   (*h)->array[0] = (*h)->array[(*h)->count-1];
   (*h)->count--;
-  
+
   minHeapify(h, 0);
-  
+
   return data;
 }
 
@@ -98,6 +99,6 @@ int isEmptyHeap(heap **h){
 	if((*h)->count == 0){
 		return 1;
 	}
-	
+
 	return 0;
 }
