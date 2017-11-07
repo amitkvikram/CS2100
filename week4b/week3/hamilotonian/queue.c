@@ -108,6 +108,7 @@ void queueFree(queue **Q){
     dequeue(Q);
   }
 
+  free((*Q)->front);
+  free((*Q)->end);
   free(*Q);
 }
-

@@ -30,3 +30,5 @@ void enQueue (queue **Q, int x);
 
 //deletes and returns element at the front of queue
 int dequeue(queue **Q);
+
+void queueFree(queue **Q);
