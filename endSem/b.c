@@ -1,10 +1,11 @@
 /*
+   End-Sem Examination
    Name: Amit Vikram Singh
    Roll No: 111601001
-   Date: 10/10/2017
-   Task: 6coloring.c
-   Running Programme: enter "make" command in terminal, and output(object) file eulerian.o will be created.
+   Date: 07/11/2017
+   Task: Distance-2Coloring
 */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -17,6 +18,7 @@
 struct Graph{		//Structure to store graph information
 	int **adjWt;
 	int V;    	   //V: no of vertices
+	int **arr;
 	char GraphName[100];
 	int isolated;
 	int components;
@@ -32,7 +34,7 @@ struct v_Info{			//structure to store information about vertices during BFS
 typedef struct Graph Graph;
 typedef struct v_Info v_Info;
 
-char color[9][20] = {"red","blue","green","brown","yellow", "black","gold"};
+char color[13][20] = {"red","blue","green","brown","yellow", "black","gold", "chocolate","cyan4","azure2","firebrick1","gold3","darkorange4"};
 
 Graph *CreateGraph(int V){		//Creating graph data
 	Graph *G = (Graph*)malloc(sizeof(Graph));
@@ -40,6 +42,16 @@ Graph *CreateGraph(int V){		//Creating graph data
 	G->adjWt = (int**)malloc(G->V * sizeof(int*));
 	for(int i=0; i<G->V; i++)		//allocating space for adjacency matrix
 		G->adjWt[i] = (int*)calloc(G->V, sizeof(int));
+		
+	
+	G->arr = (int**)malloc(G->V * sizeof(int*));
+	for(int i=0; i<G->V; i++)		//allocating space for adjacency matrix
+		G->arr[i] = (int*)calloc(G->V, sizeof(int));
+	for(int i = 0; i<G->V; i++){
+		for(int j = 0; j<G->V; j++){
+			if(j!= i) G->arr[i][j] = -1;
+		}
+	}
 	G->components = 0;
 	G->isolated = 0;
 	
@@ -56,6 +68,56 @@ v_Info* bfsv_Info(Graph *G, int root, int goal){
 	for(int i=0; i<G->V; i++)		//allocating space for adjacency matrix
 		v_InfoPtr[i].color = -1;
 	return v_InfoPtr;
+}
+
+int BreadthFirstSearch(Graph *G, v_Info *v_I, int root, int goal){
+	int flag = 0;  	//to track if path is found or not
+	queue *Q =createQueue();
+	enQueue(&Q, root);
+	int n =0;
+	while(!isEmptyQueue(&Q)){
+		int Current = dequeue(&Q);		//finding current node
+		if(Current == goal) {
+			flag = 1;		//returns 1 if Current node is goal means if we have found path from root to goal
+			break;
+		}
+		for(int i=0; i<G->V; i++){
+			if(G->adjWt[Current][i] > 0){
+				if(v_I[i].Checked == false){	//checking if cerrent node has been visted before or not
+					v_I[i].Checked = true;	//marking  node as visited
+					v_I[i].dist = v_I[Current].dist + G->adjWt[Current][i];	//updting distance from root
+					v_I[i].prev = Current;	//setting parent of ith node
+					enQueue(&Q, i);
+				}
+			}
+		}
+	}
+	free(Q);
+	return v_I[goal].dist;	
+}
+
+void Set(Graph *G, v_Info *v_I, int root, int goal){
+	for(int i =0; i<G->V; i++){
+		v_I[i].dist = -1;
+	}
+	for(int i = 0; i<G->V; i++){
+		v_I[i].Checked = false;
+	}
+	v_I[root].dist = 0;
+	v_I[root].Checked = true;
+}
+
+void calcDist(Graph *G, v_Info *v_I){
+	int root, goal, distance;
+	for(int i = 0; i<G->V; i++){
+		for(int j= i+1; j<G->V; j++){
+			Set(G, v_I, i, j);
+			root = i; goal =j;
+			distance = BreadthFirstSearch(G, v_I, root, goal);
+			G->arr[i][j] = distance;
+			G->arr[j][i] = distance;
+		}
+	}
 }
 
 //Creating dot file
@@ -91,7 +153,10 @@ int checkColoring(Graph *G, v_Info *V, int i, int j){
 		if(G->adjWt[i][k]>0){
 			if(V[k].color == j && k!=i) return 0;
 		}
-
+		
+		else if(G->arr[i][k]<3){
+			if(V[k].color == j && k!=i) return 0;
+		}
 	}
 
 	return 1;
@@ -99,7 +164,7 @@ int checkColoring(Graph *G, v_Info *V, int i, int j){
 
 void Color(Graph *G, v_Info *V){
 	for(int i=0; i<G->V; i++){
-		for(int j=0; j<4; j++){
+		for(int j=0; j<13; j++){
 			if(checkColoring(G, V, i,j)){
 				V[i].color = j;
 				break;
@@ -151,6 +216,7 @@ int main(){
 	Graph *G = Read(&fp);
 	fclose(fp);
 	v_Info *v_I = bfsv_Info(G, 0, 0);
+	calcDist(G, v_I);   //function to calculate shortest path between each pair
 	Color(G,v_I);
 	return 0;
 

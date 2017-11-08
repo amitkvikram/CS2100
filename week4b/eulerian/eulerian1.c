@@ -166,7 +166,7 @@ void PushEulerian(Graph *G, v_Info *v_I, int strtNode, Node **Head, int *pathLen
 	int CurrentNode = strtNode;
 	do{
 		for(int i = 0; i<G->V; i++){
-			if(G->adjWt[CurrentNode][i] == 1){
+			if(G->adjWt[CurrentNode][i] > 0){
 				// printf("CurrentNode: %d i: %d\n",CurrentNode, i);
 				*pathLength = *pathLength +1;
 				G->adjWt[CurrentNode][i] = 0;
@@ -195,7 +195,7 @@ void PushEulerian(Graph *G, v_Info *v_I, int strtNode, Node **Head, int *pathLen
 
 //finding and printing eulerian path
 void PrintEulerian(Graph *G, v_Info *v_I, int strtNode){
-	Node *Head = NULL;
+	Node *Head = NULL;   //Circular Linked List
   int pathLength = 0;
 
 	int CurrentNode = strtNode;
